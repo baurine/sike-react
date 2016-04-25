@@ -16,7 +16,13 @@
 
     <!-- <link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
 
-    <link rel="stylesheet" type="text/css" href="/bundle/app.css"> 
+    <!--
+        Notice here should href to "bundle/app.css" or "./bundle/app.css", not "/bundle/app.css",
+		persume the repo github address is: github.com/baurine/sike-react/ilovereact,
+        if "/bundle/app.css", it links to "baurine.github.io/bundle/app.css",
+        if "bundle/app.css", it links to "baurine.github.io/sike-react/ilovereact/bundle/app.css"
+    -->
+    <link rel="stylesheet" type="text/css" href="bundle/app.css"> 
 
 </head>
 <body>
