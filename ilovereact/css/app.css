@@ -70,3 +70,20 @@ a:hover {
   align-items:center;
   justify-content:center;
 }
+
+.main-nav {
+  display: flex;
+  flex-direction: row;
+
+  list-style: none;
+  padding: 1px;
+  margin: 0;
+}
+
+.main-nav li {
+  margin: 10px 20px;
+}
+
+.main-nav li a {
+  text-decoration: none;
+}

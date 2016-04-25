@@ -516,3 +516,27 @@ a:hover {
       -ms-flex-pack:center;
           justify-content:center;
 }
+
+.main-nav {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+
+  list-style: none;
+  padding: 1px;
+  margin: 0;
+}
+
+.main-nav li {
+  margin: 10px 20px;
+}
+
+.main-nav li a {
+  text-decoration: none;
+}
