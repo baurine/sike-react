@@ -509,7 +509,8 @@ a:hover {
   height: 100vh;
 }
 
-.section-one {
+.section-one,
+.section-four {
   -webkit-box-align:center;
   -webkit-align-items:center;
       -ms-flex-align:center;
@@ -544,7 +545,8 @@ a:hover {
   text-decoration: none;
 }
 
-.section-two {
+.section-two,
+.section-three {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   -webkit-flex-direction: row;
@@ -565,6 +567,21 @@ a:hover {
   -webkit-align-self: stretch;
       -ms-flex-item-align: stretch;
           align-self: stretch;
+  -webkit-flex-basis: 0;
+      -ms-flex-preferred-size: 0;
+          flex-basis: 0;
+
+  -webkit-box-align:center;
+
+  -webkit-align-items:center;
+
+      -ms-flex-align:center;
+
+          align-items:center;
+  -webkit-box-pack:center;
+  -webkit-justify-content:center;
+      -ms-flex-pack:center;
+          justify-content:center;
 }
 
 .feature-desc {
@@ -580,4 +597,20 @@ a:hover {
   -webkit-align-self: stretch;
       -ms-flex-item-align: stretch;
           align-self: stretch;
+  -webkit-flex-basis: 0;
+      -ms-flex-preferred-size: 0;
+          flex-basis: 0;
+
+  -webkit-box-pack:center;
+
+  -webkit-justify-content:center;
+
+      -ms-flex-pack:center;
+
+          justify-content:center;
 }
+
+.feature-desc p {
+  margin-right: 100px;
+}
+

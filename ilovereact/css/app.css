@@ -69,7 +69,8 @@ a:hover {
   height: 100vh;
 }
 
-.section-one {
+.section-one,
+.section-four {
   align-items:center;
   justify-content:center;
 }
@@ -91,7 +92,8 @@ a:hover {
   text-decoration: none;
 }
 
-.section-two {
+.section-two,
+.section-three {
   flex-direction: row;
 }
 
@@ -100,6 +102,10 @@ a:hover {
 
   flex-grow: 1;
   align-self: stretch;
+  flex-basis: 0;
+
+  align-items:center;
+  justify-content:center;
 }
 
 .feature-desc {
@@ -107,4 +113,12 @@ a:hover {
 
   flex-grow: 1;
   align-self: stretch;
+  flex-basis: 0;
+
+  justify-content:center;
 }
+
+.feature-desc p {
+  margin-right: 100px;
+}
+
