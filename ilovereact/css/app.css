@@ -67,6 +67,9 @@ a:hover {
 
 .section {
   height: 100vh;
+}
+
+.section-one {
   align-items:center;
   justify-content:center;
 }
@@ -86,4 +89,22 @@ a:hover {
 
 .main-nav li a {
   text-decoration: none;
+}
+
+.section-two {
+  flex-direction: row;
+}
+
+.iphone-demo {
+  background-color: rgba(255,0,0,0.3);
+
+  flex-grow: 1;
+  align-self: stretch;
+}
+
+.feature-desc {
+  background-color: rgba(0,255,0,0.3);
+
+  flex-grow: 1;
+  align-self: stretch;
 }
