@@ -507,6 +507,7 @@ a:hover {
 
 .section {
   height: 100vh;
+  overflow: hidden;
 }
 
 .section-one,
@@ -622,5 +623,13 @@ a:hover {
 
 .feature-desc p {
   margin-right: 100px;
+}
+
+#android-robot {
+  position: absolute;
+  top: 100%;
+  left: 100%;
+  -webkit-transform: translate(-50%, -50%) rotate(-45deg);
+          transform: translate(-50%, -50%) rotate(-45deg);
 }
 
