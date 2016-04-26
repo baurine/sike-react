@@ -98,7 +98,9 @@ a:hover {
 }
 
 .iphone-demo {
+  /*
   background-color: rgba(255,0,0,0.3);
+  */
 
   flex-grow: 1;
   align-self: stretch;
@@ -108,8 +110,16 @@ a:hover {
   justify-content:center;
 }
 
+.demo-img {
+  position: absolute;
+  top: 91px;
+  left: 24px;
+}
+
 .feature-desc {
+  /*
   background-color: rgba(0,255,0,0.3);
+  */
 
   flex-grow: 1;
   align-self: stretch;
