@@ -63,7 +63,9 @@ a:hover {
   text-decoration: none;
 }
 
-/*****************************************************/
+/**
+ * sections
+ */
 
 .section {
   height: 100vh;
@@ -140,3 +142,30 @@ a:hover {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
+/**
+ * slider control
+ */
+
+#slider-control {
+  position: fixed;
+
+  padding: 3px;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+#slider-control a {
+  padding: 3px;
+}
+
+#slider-control .dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  border: 1px solid #FFF;
+}
+
+#slider-control .active .dot {
+  background-color: #FFF;
+}
