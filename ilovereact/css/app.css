@@ -86,6 +86,16 @@ a:hover {
   background-position: center;
 }
 
+#native-section,
+#touch-section {
+  flex-direction: row;
+}
+
+#android-section {
+  align-items:center;
+  justify-content:center;
+}
+
 .overlay {
   position: absolute;
   /* left & top default value is not 0 in osx chrome 50 */
@@ -104,15 +114,6 @@ a:hover {
 #intro-section h1,
 #intro-section ul {
   z-index: 100;
-}
-
-#android-section {
-  align-items:center;
-  justify-content:center;
-}
-
-.section-demo {
-  flex-direction: row;
 }
 
 .main-nav {
