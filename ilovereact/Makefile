@@ -7,6 +7,7 @@ css:
 js:
 	mkdir -p js
 	cp ./node_modules/gsap/src/uncompressed/TweenMax.js js/
+	cp ./node_modules/gsap/src/uncompressed/plugins/ScrollToPlugin.js js/
 
 server:
 	./node_modules/.bin/browser-sync start --server --files='index.html,bundle/app.css,js/app.js'

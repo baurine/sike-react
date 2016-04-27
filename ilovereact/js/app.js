@@ -42,6 +42,45 @@ function updateSliderControl() {
     }
 }
 
+function scrollToElement(element) {
+    var topOfElement = element.offsetTop;
+
+    TweenMax.to(window, 1, {
+        scrollTo: {
+            y: topOfElement,
+        },
+
+        ease: Power2.easeInOut,
+    });
+}
+
+function addSmoothScrolling() {
+    var links = document.querySelectorAll("#slider-control a");
+
+    for (var i = 0; i < links.length; i++) {
+        var link = links[i];
+        /*
+         * error! the herf will be always the last href
+         * so when you click any dot, it will scroll the last section 
+        link.addEventListener("click", function(event) {
+            event.preventDefault();
+            
+            var href = link.getAttribute("href");
+            scrollToElement(document.querySelector(href));
+        });
+        */
+
+        (function(_link){
+            _link.addEventListener("click", function(event) {
+                event.preventDefault();
+
+                var href = _link.getAttribute("href");
+                scrollToElement(document.querySelector(href));
+            });
+        })(link);
+    }
+}
+
 window.onscroll = function() {
     updateSliderControl();
 }
@@ -50,6 +89,7 @@ window.onload = function() {
     animateLogo();
     animateRobot();
     updateSliderControl();
+    addSmoothScrolling();
 };
 
 /*
