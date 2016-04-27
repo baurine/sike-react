@@ -89,6 +89,7 @@ a:hover {
 #native-section,
 #touch-section {
   flex-direction: row;
+  justify-content: flex-end;
 }
 
 #android-section {
@@ -142,6 +143,15 @@ a:hover {
   text-decoration: none;
 }
 
+#iphone-overlay {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    /*background-color: rgba(255,0,0,0.2);*/
+
+    transform: translateY(-30%);
+}
+
 .iphone-demo {
   /*
   background-color: rgba(255,0,0,0.3);
@@ -166,9 +176,10 @@ a:hover {
   background-color: rgba(0,255,0,0.3);
   */
 
-  flex-grow: 1;
+  /*flex-grow: 1;*/
+  width: 50%;
   align-self: stretch;
-  flex-basis: 0;
+  /*flex-basis: 0;*/
 
   justify-content:center;
 }

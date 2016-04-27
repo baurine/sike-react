@@ -100,11 +100,35 @@ window.onload = function() {
 function addSrollMagicAnimation() {
     var scrollMagicController = new ScrollMagic.Controller();    
 
-    var scene1 = new ScrollMagic.Scene( {
-                         triggerElement: "#intro-section", 
-                         triggerHook: "onLeave",
-                         duration: "100%"})
-                     .setTween("#mask-gradient", {opacity: 1})
-                     .addIndicators()
-                     .addTo(scrollMagicController);
+    // fadeout intro-section backgroud
+    var fadeOutBg = new ScrollMagic.Scene( {
+                            triggerElement: "#intro-section", 
+                            triggerHook: "onLeave",
+                            duration: "100%"})
+                        .setTween("#mask-gradient", {opacity: 1})
+                        // .addIndicators({name: "fadeOutBg"})
+                        .addTo(scrollMagicController);
+
+    // move iphone
+    var moveiPhone = new ScrollMagic.Scene( {
+                            triggerElement: "#native-section", 
+                            triggerHook: "onEnter",
+                            duration: "100%"})
+                        .setTween("#iphone-overlay", {width: "50%", y: 0})
+                        // .addIndicators({name: "moveiPhone"})
+                        .addTo(scrollMagicController);
+
+    // pin iphone
+    var piniPhone = new ScrollMagic.Scene( {
+                            triggerElement: "#native-section", 
+                            triggerHook: "onLeave",
+                            duration: "100%"})
+                        .setPin("#iphone-overlay")
+                        // .addIndicators({name: "piniPhone"})
+                        .addTo(scrollMagicController);
 };
+
+
+
+
+
