@@ -90,8 +90,21 @@ window.onload = function() {
     animateRobot();
     updateSliderControl();
     addSmoothScrolling();
+
+    addSrollMagicAnimation();
 };
 
-/*
-window.onload = animatLogo;
-*/
+/**********************************************/
+// ScrollMagic
+
+function addSrollMagicAnimation() {
+    var scrollMagicController = new ScrollMagic.Controller();    
+
+    var scene1 = new ScrollMagic.Scene( {
+                         triggerElement: "#intro-section", 
+                         triggerHook: "onLeave",
+                         duration: "100%"})
+                     .setTween("#mask-gradient", {opacity: 1})
+                     .addIndicators()
+                     .addTo(scrollMagicController);
+};
