@@ -423,6 +423,8 @@ th {
   padding: 0;
 }
 
+/************************************************/
+
 body, html {
   width: 100%;
   height: 100%;
@@ -460,6 +462,8 @@ body, div, span, a, img, h1, h2, h3, h4, h5 {
   padding: 0;
 }
 
+/************************************************/
+
 * {
   position: relative;
 }
@@ -467,7 +471,9 @@ body, div, span, a, img, h1, h2, h3, h4, h5 {
 body {
   background-color: #F7F8FA;
   /*background-color: #FFFFFF;*/
-  color: #202020;
+  /*color: #202020;*/
+  color: rgba(160,160,160, 1);
+
   font-family: "Avenir Next", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 100;
 }
@@ -501,3 +507,107 @@ a {
   text-decoration: none;
 }
 */
+/************************************************/
+
+.site {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+/* colors from: http://www.w3schools.com/colors/colors_fs595.asp */
+
+.site__main {
+  width: 70%;
+
+  -webkit-box-orient: horizontal;
+
+  -webkit-box-direction: normal;
+
+  -webkit-flex-direction: row;
+
+      -ms-flex-direction: row;
+
+          flex-direction: row;
+
+  background-color: #006539;
+}
+
+.site__left-sidebar {
+  background-color: #005139;
+  -webkit-flex-basis: 0;
+      -ms-flex-preferred-size: 0;
+          flex-basis: 0;
+  padding: 10px;
+  position: fixed;
+  width: 170px;
+  height: 100vh;
+}
+
+.site__content {
+  background-color: #18622d;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  margin-left: 170px;
+}
+
+.products {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+}
+
+.product {
+  background-color: #47484a;
+  width: 50%;
+  height: 250px;
+
+  margin-bottom: 20px;
+}
+
+.site__right-sidebar {
+  width: 30%;
+  position: fixed;
+  height: 100vh;
+
+  background-color: #53593e;
+}
+
+.site__right-sidebar .cart {
+  background-color: #806947;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+
+  -webkit-flex-basis: 0;
+
+      -ms-flex-preferred-size: 0;
+
+          flex-basis: 0; /* important!!! */
+  overflow: scroll;
+
+  margin-right: 10px;
+  margin-bottom: 20px;
+}
+
+.cart-itme {
+  height: 150px;
+  margin-bottom: 20px;
+  background-color: #994680;
+}
+
+.site__right-sidebar .checkout {
+  background-color: #647489;
+
+  height: 300px;
+}
