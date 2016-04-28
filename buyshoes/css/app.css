@@ -177,7 +177,7 @@ a {
   overflow: scroll;
 
   margin-right: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .cart__title {
@@ -253,6 +253,61 @@ a {
  * checkout
  */
 
-.site__right-sidebar .checkout {
-  height: 300px;
+.checkout {
+  width: 90%;
+
+  align-self: center;
+  align-items: stretch;
+}
+
+.checkout__divider {
+  width: 50%;
+  background-color: #979797;
+}
+
+.checkout__coupon-input {
+  padding: 4px;
+}
+
+.checkout__amount {
+  justify-content: flex-end;
+  flex-direction: row;
+  padding-top: 8px;
+}
+
+.checkout__price-type {
+  flex-basis: 0;
+  flex-grow: 1;
+}
+
+.checkout__price {
+  color: black;
+}
+
+.checkout__price--strikeout {
+  text-decoration: line-through;
+}
+
+.checkout__price--saving {
+  color: rgba(255,0,0, 0.7);
+  font-weight: bold;
+}
+
+.checkout__button {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  align-self: center;
+
+  background-color: rgb(114,154,136);
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.checkout__btn-text {
+  margin-left: 20px;
+  color: white;
+  font-size: 20px;
 }

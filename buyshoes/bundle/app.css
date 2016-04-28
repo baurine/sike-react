@@ -669,7 +669,7 @@ a {
   overflow: scroll;
 
   margin-right: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .cart__title {
@@ -770,6 +770,92 @@ a {
  * checkout
  */
 
-.site__right-sidebar .checkout {
-  height: 300px;
+.checkout {
+  width: 90%;
+
+  -webkit-align-self: center;
+
+      -ms-flex-item-align: center;
+
+          align-self: center;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+
+.checkout__divider {
+  width: 50%;
+  background-color: #979797;
+}
+
+.checkout__coupon-input {
+  padding: 4px;
+}
+
+.checkout__amount {
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  padding-top: 8px;
+}
+
+.checkout__price-type {
+  -webkit-flex-basis: 0;
+      -ms-flex-preferred-size: 0;
+          flex-basis: 0;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+
+.checkout__price {
+  color: black;
+}
+
+.checkout__price--strikeout {
+  text-decoration: line-through;
+}
+
+.checkout__price--saving {
+  color: rgba(255,0,0, 0.7);
+  font-weight: bold;
+}
+
+.checkout__button {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 80%;
+  -webkit-align-self: center;
+      -ms-flex-item-align: center;
+          align-self: center;
+
+  background-color: rgb(114,154,136);
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.checkout__btn-text {
+  margin-left: 20px;
+  color: white;
+  font-size: 20px;
 }
