@@ -531,12 +531,9 @@ a {
       -ms-flex-direction: row;
 
           flex-direction: row;
-
-  background-color: #006539;
 }
 
 .site__left-sidebar {
-  background-color: #005139;
   -webkit-flex-basis: 0;
       -ms-flex-preferred-size: 0;
           flex-basis: 0;
@@ -547,11 +544,13 @@ a {
 }
 
 .site__content {
-  background-color: #18622d;
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
       -ms-flex-positive: 1;
           flex-grow: 1;
+  -webkit-flex-basis: 0;
+      -ms-flex-preferred-size: 0;
+          flex-basis: 0;
   margin-left: 170px;
 }
 
@@ -567,11 +566,79 @@ a {
 }
 
 .product {
-  background-color: #47484a;
   width: 50%;
-  height: 250px;
 
-  margin-bottom: 20px;
+  padding: 10px 10px 20px 10px;
+  margin-bottom: 10px;
+}
+
+.product__display {
+  padding: 10px;
+  border: 4px solid rgb(216,216,216);
+  border-radius: 2px;
+  background-color: #FFF;
+}
+
+.product__img {
+  width: 100%;
+}
+
+.product__add {
+  width: 60px;
+  height: 60px;
+  -webkit-align-self: center;
+      -ms-flex-item-align: center;
+          align-self: center;
+  border-radius: 50%;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+
+  background-color: rgb(216,216,216);
+  margin-top: 20px;
+}
+
+.product__price {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 24px;
+  color: black;
+  font-family: AvenirNext-DemiBold;
+}
+
+.product__desc {
+  margin-top: 10px;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.product__name {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  -webkit-flex-basis: 0;
+      -ms-flex-preferred-size: 0;
+          flex-basis: 0;
+}
+
+.product__heart {
+  -webkit-align-self: flex-start;
+      -ms-flex-item-align: start;
+          align-self: flex-start;
 }
 
 .site__right-sidebar {
@@ -588,11 +655,8 @@ a {
   -webkit-flex-grow: 1;
       -ms-flex-positive: 1;
           flex-grow: 1;
-
   -webkit-flex-basis: 0;
-
       -ms-flex-preferred-size: 0;
-
           flex-basis: 0; /* important!!! */
   overflow: scroll;
 
