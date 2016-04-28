@@ -72,6 +72,10 @@ a {
 
 .site {
   flex-direction: row;
+
+  background: url("../img/bg.jpg") no-repeat;
+  background-position: bottom center;
+  background-size: cover;
 }
 
 /* colors from: http://www.w3schools.com/colors/colors_fs595.asp */
@@ -80,6 +84,9 @@ a {
   width: 70%;
 
   flex-direction: row;
+
+  background: linear-gradient(to bottom, #F7F8FA, rgba(247, 248, 250, 0.1));
+  background-position: 0 100%;
 }
 
 .site__left-sidebar {
@@ -168,7 +175,7 @@ a {
   position: fixed;
   height: 100vh;
 
-  background-color: rgb(196, 204, 216);
+  background: linear-gradient(to bottom, #c4ccda, rgba(247,248,250,0.1));
 }
 
 .cart {
@@ -176,8 +183,9 @@ a {
   flex-basis: 0; /* important!!! */
   overflow: scroll;
 
-  margin-right: 10px;
-  margin-bottom: 10px;
+  padding: 20px 30px 0 30px;
+
+  background-color: #C4CCDA;
 }
 
 .cart__title {
@@ -254,10 +262,8 @@ a {
  */
 
 .checkout {
-  width: 90%;
-
-  align-self: center;
-  align-items: stretch;
+  background: linear-gradient(to bottom, #c4ccda, rgba(247,248,250,0.1));
+  padding: 0px 30px;
 }
 
 .checkout__divider {
