@@ -31,8 +31,8 @@ body, div, span, a, img, h1, h2, h3, h4, h5 {
 body {
   background-color: #F7F8FA;
   /*background-color: #FFFFFF;*/
-  /*color: #202020;*/
-  color: rgba(160,160,160, 1);
+  color: #202020;
+  /*color: rgba(160,160,160, 1);*/
 
   font-family: "Avenir Next", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 100;
@@ -67,6 +67,7 @@ a {
   text-decoration: none;
 }
 */
+
 /************************************************/
 
 .site {
@@ -88,6 +89,10 @@ a {
   width: 170px;
   height: 100vh;
 }
+
+/**
+ * product
+ */
 
 .site__content {
   flex-grow: 1;
@@ -154,16 +159,19 @@ a {
   align-self: flex-start;
 }
 
+/**
+ * cart
+ */
+
 .site__right-sidebar {
   width: 30%;
   position: fixed;
   height: 100vh;
 
-  background-color: #53593e;
+  background-color: rgb(196, 204, 216);
 }
 
-.site__right-sidebar .cart {
-  background-color: #806947;
+.cart {
   flex-grow: 1;
   flex-basis: 0; /* important!!! */
   overflow: scroll;
@@ -182,13 +190,69 @@ a {
 }
 
 .cart-item {
-  height: 150px;
-  margin-bottom: 20px;
-  background-color: #994680;
+  padding-top: 20px;
 }
 
-.site__right-sidebar .checkout {
-  background-color: #647489;
+.cart-item__top-part {
+  flex-direction: row;
+}
 
+.cart-item__image {
+  width: 33%;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.cart-item__image img {
+  width: 100%;
+}
+
+.cart-item__top-part__middle {
+  flex-grow: 1;
+  flex-basis: 0;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+.cart-item__price {
+  font-size: 16px;
+  color: black;
+  font-family: AvenirNext-DemiBold;
+}
+
+.cart-item__trash {
+  padding: 10px;
+}
+
+.cart-item__qty {
+  margin-top: 8px;
+}
+
+.adjust-qty {
+  flex-direction: row;
+  width: 33%;
+  justify-content: center;
+}
+
+.adjust-qty__button {
+  width: 20px;
+  height: 20px;
+  background-color: #FFF;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+}
+
+.adjust-qty__number {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+
+/**
+ * checkout
+ */
+
+.site__right-sidebar .checkout {
   height: 300px;
 }
