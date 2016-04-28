@@ -1,0 +1,224 @@
+/*****************************************************/
+/**
+ * React Native flexbox setting
+ */
+body, div, span {
+  box-sizing: border-box;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex-shrink: 0;
+  align-content: flex-start;
+
+  border: 0 solid black;
+  margin: 0;
+  padding: 0;
+}
+
+/*****************************************************/
+
+/**
+ * @import "../node_modules/normalize.css/normalize.css";
+ */
+@import "normalize.css";
+
+/*****************************************************/
+
+/**
+ * basic style
+ */
+
+* {
+  position: relative;
+}
+
+body {
+  background-color: #1F1E34;
+  color: #FFF;
+  font-family: "Avenir Next",
+      "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica,
+      Arial, "Lucida Grande", sans-serif;
+  font-weight: 100;
+}
+
+h1 {
+  font-size: 64px;
+  font-weight: 100;
+}
+
+h2 {
+  font-size: 48px;
+  font-weight: 100;
+}
+
+p {
+  font-size: 24px;
+}
+
+a {
+  font-weight: 400;
+  color: #FFF;
+}
+
+a:hover {
+  font-weight: 400;
+  color: #DADADA;
+  text-decoration: none;
+}
+
+/**
+ * sections
+ */
+
+.section {
+  height: 100vh;
+  overflow: hidden;
+}
+
+#intro-section {
+  align-items:center;
+  justify-content:center;
+
+  background-image: url(../img/background.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+#native-section,
+#touch-section {
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+#android-section {
+  align-items:center;
+  justify-content:center;
+}
+
+.overlay {
+  position: absolute;
+  /* left & top default value is not 0 in osx chrome 50 */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(rgba(0,0,0,0),rgba(31,30,52,1));
+}
+
+#mask-gradient {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background-color: rgb(31,30,52);
+}
+/**
+ * in osx chrome 50, even not set img/h1/ul position relative,
+ * they still has z-index property
+ */
+#intro-section img,
+#intro-section h1,
+#intro-section ul {
+  z-index: 100;
+}
+
+.main-nav {
+  display: flex;
+  flex-direction: row;
+
+  list-style: none;
+  padding: 1px;
+  margin: 0;
+}
+
+.main-nav li {
+  margin: 10px 20px;
+}
+
+.main-nav li a {
+  text-decoration: none;
+}
+
+#iphone-overlay {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    /*background-color: rgba(255,0,0,0.2);*/
+
+    transform: translateY(-30%);
+}
+
+.iphone-demo {
+  /*
+  background-color: rgba(255,0,0,0.3);
+  */
+
+  flex-grow: 1;
+  align-self: stretch;
+  flex-basis: 0;
+
+  align-items:center;
+  justify-content:center;
+}
+
+.demo-img {
+  position: absolute;
+  top: 91px;
+  left: 24px;
+}
+
+.feature-desc {
+  /*
+  background-color: rgba(0,255,0,0.3);
+  */
+
+  /*flex-grow: 1;*/
+  width: 50%;
+  align-self: stretch;
+  /*flex-basis: 0;*/
+
+  justify-content:center;
+}
+
+.feature-desc p {
+  margin-right: 100px;
+}
+
+#android-robot {
+  position: absolute;
+  top: 100%;
+  left: 100%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/**
+ * slider control
+ */
+
+#slider-control {
+  position: fixed;
+
+  padding: 3px;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+#slider-control a {
+  padding: 3px;
+}
+
+#slider-control .dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  border: 1px solid #FFF;
+}
+
+#slider-control .active .dot {
+  background-color: #FFF;
+}
