@@ -130,7 +130,16 @@ a {
   margin-bottom: 20px;
 }
 
-.cart-itme {
+.cart__title {
+  position: fixed;
+  z-index: 100;
+}
+
+.cart__content {
+  padding-top: 30px;
+}
+
+.cart-item {
   height: 150px;
   margin-bottom: 20px;
   background-color: #994680;
