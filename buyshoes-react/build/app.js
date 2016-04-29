@@ -196,24 +196,26 @@ var Checkout = React.createClass({
 var Product = React.createClass({
   displayName: "Product",
 
-  renderDisplay: function renderDisplay(imagePath, price) {
+  renderDisplay: function renderDisplay(product, cartItem) {
+    var opt = cartItem ? React.createElement(QuantityControl, { item: cartItem, variant: "gray" }) : React.createElement(
+      "a",
+      { className: "product__add" },
+      React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" })
+    );
+
     return React.createElement(
       "div",
       { className: "product__display" },
       React.createElement(
         "div",
         { className: "product__img-wrapper" },
-        React.createElement("img", { className: "product__img", src: imagePath })
+        React.createElement("img", { className: "product__img", src: product.imagePath })
       ),
-      React.createElement(
-        "a",
-        { className: "product__add" },
-        React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" })
-      ),
+      opt,
       React.createElement(
         "div",
         { className: "product__price" },
-        price
+        product.price
       )
     );
   }, /* don\'t forget add this ',' */
@@ -232,16 +234,14 @@ var Product = React.createClass({
   },
 
   render: function render() {
-    var _props$product = this.props.product;
-    var name = _props$product.name;
-    var price = _props$product.price;
-    var imagePath = _props$product.imagePath;
+    var product = this.props.product;
+    var cartItem = cartItems[product.id];
 
     return React.createElement(
       "div",
       { className: "product" },
-      this.renderDisplay(imagePath, price),
-      this.renderDesc(name)
+      this.renderDisplay(product, cartItem),
+      this.renderDesc(product.name)
     );
   }
 });
@@ -279,44 +279,63 @@ var CartItem = React.createClass({
     );
   },
 
-  renderQty: function renderQty(quantity) {
-    return React.createElement(
-      "div",
-      { className: "cart-item__qty" },
-      React.createElement(
-        "div",
-        { className: "adjust-qty" },
-        React.createElement(
-          "a",
-          { className: "adjust-qty__button" },
-          "-"
-        ),
-        React.createElement(
-          "div",
-          { className: "adjust-qty__number" },
-          quantity
-        ),
-        React.createElement(
-          "a",
-          { className: "adjust-qty__button" },
-          "+"
-        )
-      )
+  /*
+  renderQty(quantity) {
+    return(
+      <div className="cart-item__qty">
+        <div className="adjust-qty">
+          <a className="adjust-qty__button">-</a>
+          <div className="adjust-qty__number">{quantity}</div>
+          <a className="adjust-qty__button">+</a>
+        </div>
+      </div>      
     );
   },
+  */
 
   render: function render() {
-    var _props$cartItem = this.props.cartItem;
-    var id = _props$cartItem.id;
-    var quantity = _props$cartItem.quantity;
-
-    var product = products[id];
+    var cartItem = this.props.cartItem;
+    var product = products[cartItem.id];
 
     return React.createElement(
       "div",
       { className: "cart-item" },
-      this.renderTopPart(product, quantity),
-      this.renderQty(quantity)
+      this.renderTopPart(product, cartItem.quantity),
+      React.createElement(
+        "div",
+        { className: "cart-item__qty" },
+        React.createElement(QuantityControl, { item: cartItem })
+      )
+    );
+  }
+});
+
+var QuantityControl = React.createClass({
+  displayName: "QuantityControl",
+
+  render: function render() {
+    var item = this.props.item;
+    var variant = this.props.variant;
+    var style = "adjust-qty" + (variant === "gray" ? " adjust-qty--gray" : "");
+
+    return React.createElement(
+      "div",
+      { className: style },
+      React.createElement(
+        "a",
+        { className: "adjust-qty__button" },
+        "-"
+      ),
+      React.createElement(
+        "div",
+        { className: "adjust-qty__number" },
+        item.quantity
+      ),
+      React.createElement(
+        "a",
+        { className: "adjust-qty__button" },
+        "+"
+      )
     );
   }
 });
@@ -411,3 +430,4 @@ var cartItems = {
     quantity: 2
   }
 };
+/* this.renderQty(quantity) */

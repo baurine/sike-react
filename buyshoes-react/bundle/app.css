@@ -838,6 +838,10 @@ a {
           align-items: center;
 }
 
+.adjust-qty--gray {
+  height: 90px;
+}
+
 .adjust-qty__button {
   background: #fff;
   height: 20px; width: 20px;

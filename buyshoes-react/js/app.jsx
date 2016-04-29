@@ -152,20 +152,22 @@ let Checkout = React.createClass({
 /* react prodcut */
 
 let Product = React.createClass({
-  renderDisplay(imagePath, price) {
+  renderDisplay(product, cartItem) {
+    let opt = cartItem ?
+      (<QuantityControl item={cartItem} variant="gray"/>) :
+      (<a className="product__add">
+         <img className="product__add__icon" src="img/cart-icon.svg"/>
+       </a>);
+
     return(
       <div className="product__display">
         <div className="product__img-wrapper">
-          <img className="product__img" src={imagePath}/>
+          <img className="product__img" src={product.imagePath}/>
         </div>
 
-        <a className="product__add">
-          <img className="product__add__icon" src="img/cart-icon.svg"/>
-        </a>
+        {opt}
 
-        <div className="product__price">
-          {price}
-        </div>
+        <div className="product__price">{product.price}</div>
       </div>
     );
   }, /* don\'t forget add this ',' */
@@ -183,12 +185,13 @@ let Product = React.createClass({
   },
 
   render() {
-    let {name, price, imagePath}  = this.props.product;
+    let product = this.props.product;
+    let cartItem = cartItems[product.id];
 
     return(
       <div className="product">
-        {this.renderDisplay(imagePath, price)}
-        {this.renderDesc(name)}
+        {this.renderDisplay(product, cartItem)}
+        {this.renderDesc(product.name)}
       </div>
     ); 
   }
@@ -220,6 +223,7 @@ let CartItem = React.createClass({
     );
   },
 
+  /*
   renderQty(quantity) {
     return(
       <div className="cart-item__qty">
@@ -231,15 +235,35 @@ let CartItem = React.createClass({
       </div>      
     );
   },
+  */
 
   render() {
-    let {id, quantity} = this.props.cartItem;
-    let product = products[id];
+    let cartItem = this.props.cartItem;
+    let product = products[cartItem.id];
 
     return(
       <div className="cart-item">
-        {this.renderTopPart(product, quantity)}
-        {this.renderQty(quantity)}
+        {this.renderTopPart(product, cartItem.quantity)}
+        {/* this.renderQty(quantity) */}
+        <div className="cart-item__qty">
+          <QuantityControl item={cartItem}/>
+        </div>
+      </div>
+    );
+  }
+});
+
+let QuantityControl = React.createClass({
+  render() {
+    let item = this.props.item;
+    let variant = this.props.variant;
+    let style = "adjust-qty" + (variant==="gray" ? " adjust-qty--gray" : "");
+
+    return(
+      <div className={style}>
+        <a className="adjust-qty__button">-</a>
+        <div className="adjust-qty__number">{item.quantity}</div>
+        <a className="adjust-qty__button">+</a>
       </div>
     );
   }
