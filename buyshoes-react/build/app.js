@@ -94,7 +94,20 @@ var Products = React.createClass({
     displayName: "Products",
 
     render: function render() {
-        return React.createElement("div", { className: "products" });
+        var product = {
+            name: "Jameson Vulc",
+            price: 64.99,
+            imagePath: "img/shoes/jameson-vulc-brown-gum-orig.png",
+            gender: "man"
+        };
+
+        return React.createElement(
+            "div",
+            { className: "products" },
+            React.createElement(Product, { product: product }),
+            React.createElement(Product, { product: product }),
+            React.createElement(Product, { product: product })
+        );
     }
 });
 
@@ -117,6 +130,56 @@ var Checkout = React.createClass({
         );
     }
 });
+
+/**************************************************/
+/* react prodcuts */
+
+var Product = React.createClass({
+    displayName: "Product",
+
+    render: function render() {
+        var _props$product = this.props.product;
+        var name = _props$product.name;
+        var price = _props$product.price;
+        var imagePath = _props$product.imagePath;
+
+        return React.createElement(
+            "div",
+            { className: "product" },
+            React.createElement(
+                "div",
+                { className: "product__display" },
+                React.createElement(
+                    "div",
+                    { className: "product__img-wrapper" },
+                    React.createElement("img", { className: "product__img", src: imagePath })
+                ),
+                React.createElement(
+                    "a",
+                    { className: "product__add" },
+                    React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" })
+                ),
+                React.createElement(
+                    "div",
+                    { className: "product__price" },
+                    price
+                )
+            ),
+            React.createElement(
+                "div",
+                { className: "product__description" },
+                React.createElement(
+                    "div",
+                    { className: "product__name" },
+                    name
+                ),
+                React.createElement("img", { className: "product__heart", src: "img/heart.svg" })
+            )
+        );
+    }
+});
+
+/**************************************************/
 
 window.onload = function () {
     React.render(React.createElement(App, null), document.querySelector("#root"));
