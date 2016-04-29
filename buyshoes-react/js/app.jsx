@@ -1,6 +1,6 @@
 let App = React.createClass({
     render() {
-        return (
+        return(
             <div className="site">
               <Bg/>
               <SiteMain/>
@@ -13,7 +13,7 @@ let App = React.createClass({
 
 let Bg = React.createClass({
     render() {
-        return (
+        return(
             <div className="bg">
                 <div className="bg__img"></div>
             </div>
@@ -23,7 +23,7 @@ let Bg = React.createClass({
 
 let SiteMain = React.createClass({
     render() {
-        return (
+        return(
             <div className="site__main">
               <div className="site__left-sidebar">
                 <SiteTitle/>
@@ -39,7 +39,7 @@ let SiteMain = React.createClass({
 
 let SiteRightSiderBar = React.createClass({
     render() {
-        return (
+        return(
             <div className="site__right-sidebar">
               <Cart/>
               <Checkout/>
@@ -50,7 +50,7 @@ let SiteRightSiderBar = React.createClass({
 
 let SiteRightSiderBarToggle = React.createClass({
     render() {
-        return (
+        return(
             <a className="site__right-sidebar-toggle">
               <img src="img/arrow-icon.svg" />
             </a>
@@ -60,7 +60,7 @@ let SiteRightSiderBarToggle = React.createClass({
 
 let SiteTitle = React.createClass({
     render() {
-        return (
+        return(
             <div className="title">
               <h2>Buy Me Shoes</h2>
               <img className="title__heart" src="img/heart.svg"/>
@@ -76,7 +76,7 @@ let Products = React.createClass({
           productArr.push(<Product key={key} product={products[key]}/>);
         }
 
-        return (
+        return(
             <div className="products">
               {productArr}
             </div>
@@ -91,7 +91,7 @@ let Cart = React.createClass({
           cartItmesArr.push(<CartItem key={key} cartItem={cartItems[key]}/>);
         }
 
-        return (
+        return(
             <div className="cart">
               <h3 className="cart__title">Shopping Cart</h3>
               <div className="cart__content">
@@ -104,12 +104,47 @@ let Cart = React.createClass({
 });
 
 let Checkout = React.createClass({
+    renderCheckoutLine(title, amount) {
+      return(
+        <div className="checkout__line">
+          <div className="checkout__line__label">
+            {title}
+          </div>
+
+          <div className="checkout__line__amount">
+            {amount}
+          </div>
+        </div>
+      );
+    },
+
+    renderButton() {
+      return(
+        <a className="checkout__button">
+          <img  className="checkout__button__icon" src="img/cart-icon.svg"/>
+          <div className="checkout__button__label">
+            Checkout
+          </div>
+        </a> 
+      );
+    },
+
     render() {
-        return (
-            <div className="checkout">
-              Checkout
-            </div>
-        );
+      var totalAmount = 0;
+      for (var key in cartItems) {
+        let price = products[key].price;
+        let amount = price * cartItems[key].quantity;
+        totalAmount += amount;
+      }
+
+      return(
+        <div className="checkout">
+          <hr className="checkout__divider"/>
+          <input type="text" className="checkout__coupon-input" placeholder="coupon code"></input>
+          {this.renderCheckoutLine("Subtotal", totalAmount)}
+          {this.renderButton()}
+        </div>
+      );
     }
 });
 
@@ -118,7 +153,7 @@ let Checkout = React.createClass({
 
 let Product = React.createClass({
   renderDisplay(imagePath, price) {
-    return (
+    return(
       <div className="product__display">
         <div className="product__img-wrapper">
           <img className="product__img" src={imagePath}/>
@@ -136,7 +171,7 @@ let Product = React.createClass({
   }, /* don\'t forget add this ',' */
 
   renderDesc(name) {
-    return (
+    return(
       <div className="product__description">
         <div className="product__name">
           {name}
@@ -150,7 +185,7 @@ let Product = React.createClass({
   render() {
     let {name, price, imagePath}  = this.props.product;
 
-    return (
+    return(
       <div className="product">
         {this.renderDisplay(imagePath, price)}
         {this.renderDesc(name)}
@@ -164,7 +199,7 @@ let Product = React.createClass({
 
 let CartItem = React.createClass({
   renderTopPart(product, quantity) {
-    return (
+    return(
       <div className="cart-item__top-part">
         <div className="cart-item__image">
           <img  src={product.imagePath}/>
@@ -186,7 +221,7 @@ let CartItem = React.createClass({
   },
 
   renderQty(quantity) {
-    return (
+    return(
       <div className="cart-item__qty">
         <div className="adjust-qty">
           <a className="adjust-qty__button">-</a>
@@ -201,7 +236,7 @@ let CartItem = React.createClass({
     let {id, quantity} = this.props.cartItem;
     let product = products[id];
 
-    return (
+    return(
       <div className="cart-item">
         {this.renderTopPart(product, quantity)}
         {this.renderQty(quantity)}
