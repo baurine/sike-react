@@ -86,8 +86,18 @@ let Products = React.createClass({
 
 let Cart = React.createClass({
     render() {
+        let cartItmesArr = [];
+        for (var key in cartItems) {
+          cartItmesArr.push(<CartItem key={key} cartItem={cartItems[key]}/>);
+        }
+
         return (
             <div className="cart">
+              <h3 className="cart__title">Shopping Cart</h3>
+              <div className="cart__content">
+                <h3 className="cart__title cart__title--spacer">Shopping Cart</h3>
+                {cartItmesArr}
+              </div>
             </div>
         );
     }
@@ -104,7 +114,7 @@ let Checkout = React.createClass({
 });
 
 /**************************************************/
-/* react prodcuts */
+/* react prodcut */
 
 let Product = React.createClass({
   renderDisplay(imagePath, price) {
@@ -146,6 +156,57 @@ let Product = React.createClass({
         {this.renderDesc(name)}
       </div>
     ); 
+  }
+});
+
+/**************************************************/
+/* react cart item */
+
+let CartItem = React.createClass({
+  renderTopPart(product, quantity) {
+    return (
+      <div className="cart-item__top-part">
+        <div className="cart-item__image">
+          <img  src={product.imagePath}/>
+        </div>
+
+        <div className="cart-item__top-part__middle">
+          <div className="cart-item__title">
+            {product.name}
+          </div>
+
+          <div className="cart-item__price">
+            {product.price + (quantity > 1 ? " x " + quantity : "")}
+          </div>
+        </div>
+
+        <img className="cart-item__trash" src="img/trash-icon.svg"/>
+      </div>       
+    );
+  },
+
+  renderQty(quantity) {
+    return (
+      <div className="cart-item__qty">
+        <div className="adjust-qty">
+          <a className="adjust-qty__button">-</a>
+          <div className="adjust-qty__number">{quantity}</div>
+          <a className="adjust-qty__button">+</a>
+        </div>
+      </div>      
+    );
+  },
+
+  render() {
+    let {id, quantity} = this.props.cartItem;
+    let product = products[id];
+
+    return (
+      <div className="cart-item">
+        {this.renderTopPart(product, quantity)}
+        {this.renderQty(quantity)}
+      </div>
+    );
   }
 });
 
@@ -222,5 +283,20 @@ let products = {
     imagePath: "img/shoes/corby-womens-2-tan-white-orig.png",
     price: 44.99,
     gender: "woman",
+  },
+};
+
+/**************************************************/
+/* cart items */
+
+let cartItems = {
+  "jameson-vulc": {
+    id: "jameson-vulc",
+    quantity: 1,
+  },
+
+  "scout-womens-6": {
+    id: "scout-womens-6",
+    quantity: 2,
   },
 };
