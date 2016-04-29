@@ -73,7 +73,7 @@ let Products = React.createClass({
     render() {
         let productArr = [];
         for (var key in products) {
-          productArr.push(<Product product={products[key]}/>);
+          productArr.push(<Product key={key} product={products[key]}/>);
         }
 
         return (
