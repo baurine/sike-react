@@ -1,3 +1,9 @@
+//const Ps = require("../node_modules/perfect-scrollbar/index")
+//const React = require("../node_modules/react/react")
+const Ps = require("perfect-scrollbar");
+const React = require("react");
+//let {pi, e} = require("./pie");
+
 let App = React.createClass({
     render() {
         return(
