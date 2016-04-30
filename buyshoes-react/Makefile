@@ -1,4 +1,4 @@
-.PHONY: all css js compile_js server clean
+.PHONY: all css js mini_js server clean
 all:
 	(make css & make js & make server & wait)
 
@@ -10,7 +10,11 @@ css:
 
 js:
 	mkdir -p build
-	./node_modules/.bin/webpack  js/app.jsx build/app.js --module-bind jsx=babel --module-bind js=babel --watch --progress
+	./node_modules/.bin/webpack  js/app.jsx build/app.js --module-bind jsx=babel --module-bind js=babel --watch --progress -d
+
+mini_js:
+	mkdir -p build
+	./node_modules/.bin/webpack  js/app.jsx build/app.js --module-bind jsx=babel --module-bind js=babel -p
 
 server:
 	browser-sync start --server --files='index.html,bundle/app.css,build/app.js'
