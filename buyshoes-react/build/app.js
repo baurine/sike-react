@@ -50,7 +50,6 @@
 
 	var Ps = __webpack_require__(1);
 	var React = __webpack_require__(21);
-	//let {pi, e} = require("./pie");
 
 	var App = React.createClass({
 	  displayName: "App",
