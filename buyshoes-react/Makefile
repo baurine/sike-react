@@ -10,7 +10,7 @@ css:
 
 js:
 	mkdir -p build
-	./node_modules/.bin/webpack --watch --progress js/app.jsx build/app.js --module-bind jsx=babel
+	./node_modules/.bin/webpack  js/app.jsx build/app.js --module-bind jsx=babel --module-bind js=babel --watch --progress
 
 server:
 	browser-sync start --server --files='index.html,bundle/app.css,build/app.js'
