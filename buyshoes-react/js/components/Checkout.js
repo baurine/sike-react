@@ -51,7 +51,7 @@ let Checkout = React.createClass({
       <div className="checkout">
         <hr className="checkout__divider"/>
         <input type="text" className="checkout__coupon-input" placeholder="coupon code"></input>
-        {this.renderCheckoutLine("Subtotal", totalAmount)}
+        {this.renderCheckoutLine("Subtotal", totalAmount.toFixed(2))}
         {this.renderButton()}
       </div>
     );

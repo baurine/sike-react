@@ -20742,8 +20742,18 @@
 	
 	var React = __webpack_require__(/*! react */ 1);
 	
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 188);
+	
 	var QuantityControl = React.createClass({
 	  displayName: "QuantityControl",
+	
+	  _addQuantity: function _addQuantity(e) {
+	    CartStore.addCartItem(this.props.item.id);
+	  },
+	
+	  _substractQuantity: function _substractQuantity(e) {
+	    CartStore.subtractCartItem(this.props.item.id);
+	  },
 	
 	  render: function render() {
 	    var item = this.props.item;
@@ -20755,7 +20765,7 @@
 	      { className: style },
 	      React.createElement(
 	        "a",
-	        { className: "adjust-qty__button" },
+	        { className: "adjust-qty__button", onClick: this._substractQuantity },
 	        "-"
 	      ),
 	      React.createElement(
@@ -20765,7 +20775,7 @@
 	      ),
 	      React.createElement(
 	        "a",
-	        { className: "adjust-qty__button" },
+	        { className: "adjust-qty__button", onClick: this._addQuantity },
 	        "+"
 	      )
 	    );
@@ -21175,7 +21185,7 @@
 	      { className: "checkout" },
 	      React.createElement("hr", { className: "checkout__divider" }),
 	      React.createElement("input", { type: "text", className: "checkout__coupon-input", placeholder: "coupon code" }),
-	      this.renderCheckoutLine("Subtotal", totalAmount),
+	      this.renderCheckoutLine("Subtotal", totalAmount.toFixed(2)),
 	      this.renderButton()
 	    );
 	  }
