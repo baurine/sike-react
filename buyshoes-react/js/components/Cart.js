@@ -2,16 +2,24 @@ const React = require("react");
 const Ps = require("perfect-scrollbar");
 
 const CartItem = require("./CartItem");
-let cartItems = require("../data").cartItems;
+
+const CartStore = require("../stores/CartStore");
 
 let Cart = React.createClass({
     componentDidMount() {
       let $content = React.findDOMNode(this.refs.content);
       Ps.initialize($content);
+
+      CartStore.addChangeListener(this.forceUpdate.bind(this));
+    },
+
+    componentWillUnMount() {
+      CartStore.removeChangeListener(this.forceUpdate.bind(this));
     },
 
     render() {
         let cartItmesArr = [];
+        let cartItems = CartStore.getCartItems();
         for (var key in cartItems) {
           cartItmesArr.push(<CartItem key={key} cartItem={cartItems[key]}/>);
         }
