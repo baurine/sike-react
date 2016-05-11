@@ -3,10 +3,16 @@ const React = require("react");
 const QuantityControl = require("./QuantityControl");
 let products = require("../data").products;
 
+const CartStore = require("../stores/CartStore");
+
 /**************************************************/
 /* react cart item */
 
 let CartItem = React.createClass({
+  _removeCartItem(e) {
+    CartStore.removeCartItem(this.props.cartItem.id);
+  },
+
   renderTopPart(product, quantity) {
     return(
       <div className="cart-item__top-part">
@@ -24,8 +30,9 @@ let CartItem = React.createClass({
           </div>
         </div>
 
-        <img className="cart-item__trash" src="img/trash-icon.svg"/>
-      </div>       
+        <img className="cart-item__trash" src="img/trash-icon.svg"
+          onClick={this._removeCartItem}/>
+      </div>
     );
   },
 

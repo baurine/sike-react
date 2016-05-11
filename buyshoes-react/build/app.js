@@ -20672,11 +20672,17 @@
 	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 187);
 	var products = __webpack_require__(/*! ../data */ 163).products;
 	
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 188);
+	
 	/**************************************************/
 	/* react cart item */
 	
 	var CartItem = React.createClass({
 	  displayName: "CartItem",
+	
+	  _removeCartItem: function _removeCartItem(e) {
+	    CartStore.removeCartItem(this.props.cartItem.id);
+	  },
 	
 	  renderTopPart: function renderTopPart(product, quantity) {
 	    return React.createElement(
@@ -20701,7 +20707,8 @@
 	          product.price + (quantity > 1 ? " x " + quantity : "")
 	        )
 	      ),
-	      React.createElement("img", { className: "cart-item__trash", src: "img/trash-icon.svg" })
+	      React.createElement("img", { className: "cart-item__trash", src: "img/trash-icon.svg",
+	        onClick: this._removeCartItem })
 	    );
 	  },
 	
