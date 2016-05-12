@@ -18808,13 +18808,19 @@
 	var Product = __webpack_require__(/*! ./Product */ 162);
 	var products = __webpack_require__(/*! ../data */ 166).products;
 	
+	var LikeStore = __webpack_require__(/*! ../stores/LikeStore */ 193);
+	
 	var Products = React.createClass({
 	    displayName: "Products",
+	
+	    componentDidMount: function componentDidMount() {
+	        LikeStore.addChangeListener(this.forceUpdate.bind(this));
+	    },
 	
 	    render: function render() {
 	        var productArr = [];
 	        for (var key in products) {
-	            productArr.push(React.createElement(Product, { key: key, product: products[key] }));
+	            productArr.push(React.createElement(Product, { key: key, product: products[key], like: LikeStore.getLikeStatus(key) }));
 	        }
 	
 	        return React.createElement(
@@ -18842,6 +18848,8 @@
 	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 164);
 	var addCartItem = CartStore.addCartItem;
 	
+	var LikeStore = __webpack_require__(/*! ../stores/LikeStore */ 193);
+	
 	/**************************************************/
 	/* react prodcut */
 	
@@ -18858,6 +18866,10 @@
 	
 	  _buyProduct: function _buyProduct(e) {
 	    addCartItem(this.props.product.id);
+	  },
+	
+	  _likeItem: function _likeItem(e) {
+	    LikeStore.toggleLikeItem(this.props.product.id);
 	  },
 	
 	  renderDisplay: function renderDisplay(product, cartItem) {
@@ -18885,6 +18897,8 @@
 	  },
 	
 	  renderDesc: function renderDesc(name) {
+	    var imageSrc = this.props.like ? "img/heart-liked.svg" : "img/heart.svg";
+	
 	    return React.createElement(
 	      "div",
 	      { className: "product__description" },
@@ -18893,7 +18907,7 @@
 	        { className: "product__name" },
 	        name
 	      ),
-	      React.createElement("img", { className: "product__heart", src: "img/heart.svg" })
+	      React.createElement("img", { className: "product__heart", src: imageSrc, onClick: this._likeItem.bind(this) })
 	    );
 	  },
 	
@@ -21318,6 +21332,53 @@
 	});
 	
 	module.exports = SiteRightSiderBarToggle;
+
+/***/ },
+/* 193 */
+/*!********************************!*\
+  !*** ./js/stores/LikeStore.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var EventEmitter = __webpack_require__(/*! events */ 165);
+	
+	var emitter = new EventEmitter();
+	
+	var _likeItems = {};
+	
+	module.exports = {
+	  likeItems: function likeItems() {
+	    return _likeItems;
+	  },
+	
+	  toggleLikeItem: function toggleLikeItem(productId) {
+	    if (_likeItems[productId]) {
+	      _likeItems[productId].like = !_likeItems[productId].like;
+	    } else {
+	      _likeItems[productId] = { like: true };
+	    }
+	
+	    emitter.emit("change");
+	  },
+	
+	  getLikeStatus: function getLikeStatus(productId) {
+	    if (_likeItems[productId]) {
+	      return _likeItems[productId].like;
+	    } else {
+	      return false;
+	    }
+	  },
+	
+	  addChangeListener: function addChangeListener(callback) {
+	    emitter.addListener("change", callback);
+	  },
+	
+	  removeChangeListener: function removeChangeListener(callback) {
+	    emitter.removeListener("change", callback);
+	  }
+	};
 
 /***/ }
 /******/ ]);

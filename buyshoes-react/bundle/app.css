@@ -708,8 +708,8 @@ a {
 }
 
 .product__heart {
+  cursor: pointer;
 }
-
 
 .cart {
   -webkit-box-flex: 1;

@@ -4,6 +4,8 @@ const QuantityControl = require("./QuantityControl");
 const CartStore = require("../stores/CartStore");
 const {addCartItem} = CartStore;
 
+const LikeStore = require("../stores/LikeStore");
+
 /**************************************************/
 /* react prodcut */
 
@@ -18,6 +20,10 @@ let Product = React.createClass({
 
   _buyProduct(e) {
     addCartItem(this.props.product.id);
+  },
+
+  _likeItem(e) {
+    LikeStore.toggleLikeItem(this.props.product.id);
   },
 
   renderDisplay(product, cartItem) {
@@ -41,13 +47,16 @@ let Product = React.createClass({
   },
 
   renderDesc(name) {
+    let imageSrc = this.props.like ?
+      "img/heart-liked.svg" : "img/heart.svg";
+
     return(
       <div className="product__description">
         <div className="product__name">
           {name}
         </div>
 
-        <img className="product__heart" src="img/heart.svg"/>
+        <img className="product__heart" src={imageSrc} onClick={this._likeItem.bind(this)}/>
       </div>
     );
   },
