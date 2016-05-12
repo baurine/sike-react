@@ -661,6 +661,7 @@ a {
       -ms-flex-pack: center;
           justify-content: center;
   margin: 15px;
+  cursor: pointer;
 }
 
 .product__price {
@@ -824,6 +825,7 @@ a {
 }
 
 .cart-item__trash {
+  cursor: pointer;
 }
 
 .adjust-qty {

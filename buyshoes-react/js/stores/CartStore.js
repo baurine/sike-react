@@ -6,6 +6,10 @@ let emitter = new EventEmitter();
 let _cartItems = {};
 
 module.exports = {
+  cartItems() {
+    return _cartItems;
+  },
+
   getCartItems() {
     return _cartItems;
   },

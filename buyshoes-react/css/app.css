@@ -183,6 +183,7 @@ a {
   background-color: #D8D8D8;
   justify-content: center;
   margin: 15px;
+  cursor: pointer;
 }
 
 .product__price {
@@ -298,6 +299,7 @@ a {
 }
 
 .cart-item__trash {
+  cursor: pointer;
 }
 
 .adjust-qty {
