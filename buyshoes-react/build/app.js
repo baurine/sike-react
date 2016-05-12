@@ -18806,8 +18806,8 @@
 	
 	var React = __webpack_require__(/*! react */ 1);
 	var Product = __webpack_require__(/*! ./Product */ 162);
-	var products = __webpack_require__(/*! ../data */ 166).products;
 	
+	var ProductStore = __webpack_require__(/*! ../stores/ProductStore */ 194);
 	var LikeStore = __webpack_require__(/*! ../stores/LikeStore */ 193);
 	
 	var Products = React.createClass({
@@ -18819,6 +18819,7 @@
 	
 	    render: function render() {
 	        var productArr = [];
+	        var products = ProductStore.productItems();
 	        for (var key in products) {
 	            productArr.push(React.createElement(Product, { key: key, product: products[key], like: LikeStore.getLikeStatus(key) }));
 	        }
@@ -21369,6 +21370,39 @@
 	    } else {
 	      return false;
 	    }
+	  },
+	
+	  addChangeListener: function addChangeListener(callback) {
+	    emitter.addListener("change", callback);
+	  },
+	
+	  removeChangeListener: function removeChangeListener(callback) {
+	    emitter.removeListener("change", callback);
+	  }
+	};
+
+/***/ },
+/* 194 */
+/*!***********************************!*\
+  !*** ./js/stores/ProductStore.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _require = __webpack_require__(/*! ../data */ 166);
+	
+	var products = _require.products;
+	
+	var EventEmitter = __webpack_require__(/*! events */ 165);
+	
+	var emitter = new EventEmitter();
+	
+	var _productItems = products;
+	
+	module.exports = {
+	  productItems: function productItems() {
+	    return _productItems;
 	  },
 	
 	  addChangeListener: function addChangeListener(callback) {

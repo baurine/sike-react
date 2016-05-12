@@ -1,7 +1,7 @@
 const React = require("react");
 const Product = require("./Product");
-const products = require("../data").products;
 
+const ProductStore = require("../stores/ProductStore");
 const LikeStore = require("../stores/LikeStore");
 
 let Products = React.createClass({
@@ -11,6 +11,7 @@ let Products = React.createClass({
 
     render() {
         let productArr = [];
+        let products = ProductStore.productItems();
         for (var key in products) {
           productArr.push(<Product key={key} product={products[key]} like={LikeStore.getLikeStatus(key)}/>);
         }
