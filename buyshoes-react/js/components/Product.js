@@ -2,7 +2,6 @@ const React = require("react");
 
 const QuantityControl = require("./QuantityControl");
 const CartStore = require("../stores/CartStore");
-const LikeStore = require("../stores/LikeStore");
 const Actions = require("../dispatcher/Actions");
 
 /**************************************************/
@@ -22,7 +21,7 @@ let Product = React.createClass({
   },
 
   _likeItem(e) {
-    LikeStore.toggleLikeItem(this.props.product.id);
+    Actions.toggleLikeItem(this.props.product.id);
   },
 
   renderDisplay(product, cartItem) {

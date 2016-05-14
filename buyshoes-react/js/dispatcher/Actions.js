@@ -20,5 +20,12 @@ module.exports = {
       type: 'removeCartItem',
       productId: productId
     });
+  },
+
+  toggleLikeItem(productId) {
+    AppDispatcher.dispatch({
+      type: 'toggleLikeItem',
+      productId: productId
+    });
   }
 }

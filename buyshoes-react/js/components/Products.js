@@ -7,13 +7,24 @@ const LikeStore = require("../stores/LikeStore");
 let Products = React.createClass({
     componentDidMount() {
       LikeStore.addChangeListener(this.forceUpdate.bind(this));
+      ProductStore.addChangeListener(this.forceUpdate.bind(this));
     },
 
     render() {
         let productArr = [];
         let products = ProductStore.productItems();
         for (var key in products) {
-          productArr.push(<Product key={key} product={products[key]} like={LikeStore.getLikeStatus(key)}/>);
+          if (!ProductStore.isFilter()) {
+            productArr.push(<Product key={key}
+              product={products[key]}
+              like={LikeStore.getLikeStatus(key)}/>);
+          } else {
+            if (LikeStore.getLikeStatus(key)) {
+              productArr.push(<Product key={key}
+                product={products[key]}
+                like={true}/>);
+            }
+          }
         }
 
         return(

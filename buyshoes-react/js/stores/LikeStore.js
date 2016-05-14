@@ -1,15 +1,20 @@
+const AppDispatcher = require("../dispatcher/Dispatcher");
 const EventEmitter = require("events");
 
 let emitter = new EventEmitter();
 
 let _likeItems = {};
 
-module.exports = {
-  likeItems() {
-    return _likeItems;
-  },
+let dispatcherToken = AppDispatcher.register((action)=>{
+  let handler = handlers[action.type];
+  if (handler) {
+    handler(action);
+  }
+});
 
-  toggleLikeItem(productId) {
+let handlers = {
+  toggleLikeItem(action) {
+    let productId = action.productId;
     if (_likeItems[productId]) {
       (_likeItems[productId]).like = !(_likeItems[productId]).like;
     } else {
@@ -17,6 +22,12 @@ module.exports = {
     }
 
     emitter.emit("change");
+  },
+};
+
+module.exports = {
+  likeItems() {
+    return _likeItems;
   },
 
   getLikeStatus(productId) {

@@ -556,6 +556,10 @@ a {
   padding: 20px 15px;
 }
 
+.title__heart {
+  cursor: pointer;
+}
+
 .site__content {
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
