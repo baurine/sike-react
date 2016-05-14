@@ -2,9 +2,8 @@ const React = require("react");
 
 const QuantityControl = require("./QuantityControl");
 const CartStore = require("../stores/CartStore");
-const {addCartItem} = CartStore;
-
 const LikeStore = require("../stores/LikeStore");
+const Actions = require("../dispatcher/Actions");
 
 /**************************************************/
 /* react prodcut */
@@ -19,7 +18,7 @@ let Product = React.createClass({
   },
 
   _buyProduct(e) {
-    addCartItem(this.props.product.id);
+    Actions.addCartItem(this.props.product.id);
   },
 
   _likeItem(e) {

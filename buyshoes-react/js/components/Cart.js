@@ -3,9 +3,6 @@ const Ps = require("perfect-scrollbar");
 
 const CartItem = require("./CartItem");
 
-const ConnectedStore = require("./ConnectedStore");
-const CartStore = require("../stores/CartStore");
-
 let Cart = React.createClass({
     componentDidMount() {
       let $content = React.findDOMNode(this.refs.content);
@@ -30,6 +27,11 @@ let Cart = React.createClass({
         );
     }
 });
+
+/***********************************************************/
+
+const ConnectedStore = require("./ConnectedStore");
+const CartStore = require("../stores/CartStore");
 
 class ConnectedCart extends React.Component {
   render() {

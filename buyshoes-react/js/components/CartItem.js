@@ -1,16 +1,15 @@
 const React = require("react");
 
 const QuantityControl = require("./QuantityControl");
-let products = require("../data").products;
-
-const CartStore = require("../stores/CartStore");
+const ProductStore = require("../stores/ProductStore");
+const Actions = require("../dispatcher/Actions");
 
 /**************************************************/
 /* react cart item */
 
 let CartItem = React.createClass({
   _removeCartItem(e) {
-    CartStore.removeCartItem(this.props.cartItem.id);
+    Actions.removeCartItem(this.props.cartItem.id);
   },
 
   renderTopPart(product, quantity) {
@@ -38,6 +37,7 @@ let CartItem = React.createClass({
 
   render() {
     let cartItem = this.props.cartItem;
+    let products = ProductStore.productItems();
     let product = products[cartItem.id];
 
     return(

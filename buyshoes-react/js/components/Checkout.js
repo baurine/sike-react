@@ -1,7 +1,6 @@
 const React = require("react");
 
-let {products} = require("../data");
-
+const ProductStore = require("../stores/ProductStore");
 const CartStore = require("../stores/CartStore");
 
 let Checkout = React.createClass({
@@ -41,6 +40,7 @@ let Checkout = React.createClass({
   render() {
     var totalAmount = 0;
     let cartItems = CartStore.getCartItems();
+    let products = ProductStore.productItems();
     for (var key in cartItems) {
       let price = products[key].price;
       let amount = price * cartItems[key].quantity;

@@ -1,14 +1,14 @@
 const React = require("react");
 
-const CartStore = require("../stores/CartStore");
+const Actions = require("../dispatcher/Actions");
 
 let QuantityControl = React.createClass({
   _addQuantity(e) {
-    CartStore.addCartItem(this.props.item.id);
+    Actions.addCartItem(this.props.item.id);
   },
 
   _substractQuantity(e) {
-    CartStore.subtractCartItem(this.props.item.id);
+    Actions.subtractCartItem(this.props.item.id);
   },
 
   render() {
