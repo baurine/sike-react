@@ -1,16 +1,33 @@
 const React = require("react");
 
 const QuantityControl = require("./QuantityControl");
-let cartItems = require("../data").cartItems;
+const CartStore = require("../stores/CartStore");
+const Actions = require("../dispatcher/Actions");
 
 /**************************************************/
 /* react prodcut */
 
 let Product = React.createClass({
+  componentDidMount() {
+    CartStore.addChangeListener(this.forceUpdate.bind(this));
+  },
+
+  componentWillUnMount() {
+    CartStore.removeChangeListener(this.forceUpdate.bind(this));
+  },
+
+  _buyProduct(e) {
+    Actions.addCartItem(this.props.product.id);
+  },
+
+  _likeItem(e) {
+    Actions.toggleLikeItem(this.props.product.id);
+  },
+
   renderDisplay(product, cartItem) {
     let opt = cartItem ?
       (<QuantityControl item={cartItem} variant="gray"/>) :
-      (<a className="product__add">
+      (<a className="product__add" onClick={this._buyProduct}>
          <img className="product__add__icon" src="img/cart-icon.svg"/>
        </a>);
 
@@ -28,19 +45,23 @@ let Product = React.createClass({
   },
 
   renderDesc(name) {
+    let imageSrc = this.props.like ?
+      "img/heart-liked.svg" : "img/heart.svg";
+
     return(
       <div className="product__description">
         <div className="product__name">
           {name}
         </div>
 
-        <img className="product__heart" src="img/heart.svg"/>
-      </div>      
+        <img className="product__heart" src={imageSrc} onClick={this._likeItem.bind(this)}/>
+      </div>
     );
   },
 
   render() {
     let product = this.props.product;
+    let cartItems = CartStore.getCartItems();
     let cartItem = cartItems[product.id];
 
     return(
@@ -48,7 +69,7 @@ let Product = React.createClass({
         {this.renderDisplay(product, cartItem)}
         {this.renderDesc(product.name)}
       </div>
-    ); 
+    );
   }
 });
 

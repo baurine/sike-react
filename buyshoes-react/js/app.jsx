@@ -5,10 +5,12 @@ const React = require("react");
 //let {products, cartItems} = require("./data.js");
 const App = require("./components/App");
 
+const EnableLogging = require("./LoggingService");
+
 /**************************************************/
 
 window.onload = function () {
     //React.render(React.createElement(App, null), document.querySelector("#root"));
+    EnableLogging();
     React.render(<App/>, document.querySelector("#root"));
 };
-

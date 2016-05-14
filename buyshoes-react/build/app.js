@@ -56,10 +56,13 @@
 	//let {products, cartItems} = require("./data.js");
 	var App = __webpack_require__(/*! ./components/App */ 157);
 	
+	var EnableLogging = __webpack_require__(/*! ./LoggingService */ 197);
+	
 	/**************************************************/
 	
 	window.onload = function () {
 	    //React.render(React.createElement(App, null), document.querySelector("#root"));
+	    EnableLogging();
 	    React.render(React.createElement(App, null), document.querySelector("#root"));
 	};
 
@@ -18683,8 +18686,8 @@
 	
 	var Bg = __webpack_require__(/*! ./Bg */ 158);
 	var SiteMain = __webpack_require__(/*! ./SiteMain */ 159);
-	var SiteRightSiderBar = __webpack_require__(/*! ./SiteRightSiderBar */ 165);
-	var SiteRightSiderBarToggle = __webpack_require__(/*! ./SiteRightSiderBarToggle */ 189);
+	var SiteRightSiderBar = __webpack_require__(/*! ./SiteRightSiderBar */ 171);
+	var SiteRightSiderBarToggle = __webpack_require__(/*! ./SiteRightSiderBarToggle */ 196);
 	
 	var App = React.createClass({
 	    displayName: "App",
@@ -18775,22 +18778,39 @@
 	"use strict";
 	
 	var React = __webpack_require__(/*! react */ 1);
+	var ProductStore = __webpack_require__(/*! ../stores/ProductStore */ 168);
 	
 	var SiteTitle = React.createClass({
-	    displayName: "SiteTitle",
+	  displayName: "SiteTitle",
 	
-	    render: function render() {
-	        return React.createElement(
-	            "div",
-	            { className: "title" },
-	            React.createElement(
-	                "h2",
-	                null,
-	                "Buy Me Shoes"
-	            ),
-	            React.createElement("img", { className: "title__heart", src: "img/heart.svg" })
-	        );
-	    }
+	  getInitialState: function getInitialState() {
+	    return {
+	      filter: false
+	    };
+	  },
+	
+	  _filter: function _filter() {
+	    var tmp = !this.state.filter;
+	    this.setState({ filter: tmp });
+	    ProductStore.setFilter(tmp);
+	  },
+	
+	  render: function render() {
+	    var imageSrc = this.state.filter ? "img/heart-liked.svg" : "img/heart.svg";
+	
+	    return React.createElement(
+	      "div",
+	      { className: "title" },
+	      React.createElement(
+	        "h2",
+	        null,
+	        "Buy Me Shoes"
+	      ),
+	      React.createElement("img", { className: "title__heart",
+	        onClick: this._filter.bind(this),
+	        src: imageSrc })
+	    );
+	  }
 	});
 	
 	module.exports = SiteTitle;
@@ -18806,23 +18826,41 @@
 	
 	var React = __webpack_require__(/*! react */ 1);
 	var Product = __webpack_require__(/*! ./Product */ 162);
-	var products = __webpack_require__(/*! ../data */ 164).products;
+	
+	var ProductStore = __webpack_require__(/*! ../stores/ProductStore */ 168);
+	var LikeStore = __webpack_require__(/*! ../stores/LikeStore */ 170);
 	
 	var Products = React.createClass({
-	    displayName: "Products",
+	  displayName: "Products",
 	
-	    render: function render() {
-	        var productArr = [];
-	        for (var key in products) {
-	            productArr.push(React.createElement(Product, { key: key, product: products[key] }));
+	  componentDidMount: function componentDidMount() {
+	    LikeStore.addChangeListener(this.forceUpdate.bind(this));
+	    ProductStore.addChangeListener(this.forceUpdate.bind(this));
+	  },
+	
+	  render: function render() {
+	    var productArr = [];
+	    var products = ProductStore.productItems();
+	    for (var key in products) {
+	      if (!ProductStore.isFilter()) {
+	        productArr.push(React.createElement(Product, { key: key,
+	          product: products[key],
+	          like: LikeStore.getLikeStatus(key) }));
+	      } else {
+	        if (LikeStore.getLikeStatus(key)) {
+	          productArr.push(React.createElement(Product, { key: key,
+	            product: products[key],
+	            like: true }));
 	        }
-	
-	        return React.createElement(
-	            "div",
-	            { className: "products" },
-	            productArr
-	        );
+	      }
 	    }
+	
+	    return React.createElement(
+	      "div",
+	      { className: "products" },
+	      productArr
+	    );
+	  }
 	});
 	
 	module.exports = Products;
@@ -18839,7 +18877,8 @@
 	var React = __webpack_require__(/*! react */ 1);
 	
 	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 163);
-	var cartItems = __webpack_require__(/*! ../data */ 164).cartItems;
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 167);
+	var Actions = __webpack_require__(/*! ../dispatcher/Actions */ 164);
 	
 	/**************************************************/
 	/* react prodcut */
@@ -18847,10 +18886,26 @@
 	var Product = React.createClass({
 	  displayName: "Product",
 	
+	  componentDidMount: function componentDidMount() {
+	    CartStore.addChangeListener(this.forceUpdate.bind(this));
+	  },
+	
+	  componentWillUnMount: function componentWillUnMount() {
+	    CartStore.removeChangeListener(this.forceUpdate.bind(this));
+	  },
+	
+	  _buyProduct: function _buyProduct(e) {
+	    Actions.addCartItem(this.props.product.id);
+	  },
+	
+	  _likeItem: function _likeItem(e) {
+	    Actions.toggleLikeItem(this.props.product.id);
+	  },
+	
 	  renderDisplay: function renderDisplay(product, cartItem) {
 	    var opt = cartItem ? React.createElement(QuantityControl, { item: cartItem, variant: "gray" }) : React.createElement(
 	      "a",
-	      { className: "product__add" },
+	      { className: "product__add", onClick: this._buyProduct },
 	      React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" })
 	    );
 	
@@ -18872,6 +18927,8 @@
 	  },
 	
 	  renderDesc: function renderDesc(name) {
+	    var imageSrc = this.props.like ? "img/heart-liked.svg" : "img/heart.svg";
+	
 	    return React.createElement(
 	      "div",
 	      { className: "product__description" },
@@ -18880,12 +18937,13 @@
 	        { className: "product__name" },
 	        name
 	      ),
-	      React.createElement("img", { className: "product__heart", src: "img/heart.svg" })
+	      React.createElement("img", { className: "product__heart", src: imageSrc, onClick: this._likeItem.bind(this) })
 	    );
 	  },
 	
 	  render: function render() {
 	    var product = this.props.product;
+	    var cartItems = CartStore.getCartItems();
 	    var cartItem = cartItems[product.id];
 	
 	    return React.createElement(
@@ -18910,8 +18968,18 @@
 	
 	var React = __webpack_require__(/*! react */ 1);
 	
+	var Actions = __webpack_require__(/*! ../dispatcher/Actions */ 164);
+	
 	var QuantityControl = React.createClass({
 	  displayName: "QuantityControl",
+	
+	  _addQuantity: function _addQuantity(e) {
+	    Actions.addCartItem(this.props.item.id);
+	  },
+	
+	  _substractQuantity: function _substractQuantity(e) {
+	    Actions.subtractCartItem(this.props.item.id);
+	  },
 	
 	  render: function render() {
 	    var item = this.props.item;
@@ -18923,7 +18991,7 @@
 	      { className: style },
 	      React.createElement(
 	        "a",
-	        { className: "adjust-qty__button" },
+	        { className: "adjust-qty__button", onClick: this._substractQuantity },
 	        "-"
 	      ),
 	      React.createElement(
@@ -18933,7 +19001,7 @@
 	      ),
 	      React.createElement(
 	        "a",
-	        { className: "adjust-qty__button" },
+	        { className: "adjust-qty__button", onClick: this._addQuantity },
 	        "+"
 	      )
 	    );
@@ -18944,6 +19012,500 @@
 
 /***/ },
 /* 164 */
+/*!**********************************!*\
+  !*** ./js/dispatcher/Actions.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _Dispatcher = __webpack_require__(/*! ./Dispatcher */ 165);
+	
+	var _Dispatcher2 = _interopRequireDefault(_Dispatcher);
+	
+	module.exports = {
+	  addCartItem: function addCartItem(productId) {
+	    _Dispatcher2['default'].dispatch({
+	      type: 'addCartItem',
+	      productId: productId
+	    });
+	  },
+	
+	  subtractCartItem: function subtractCartItem(productId) {
+	    _Dispatcher2['default'].dispatch({
+	      type: 'subtractCartItem',
+	      productId: productId
+	    });
+	  },
+	
+	  removeCartItem: function removeCartItem(productId) {
+	    _Dispatcher2['default'].dispatch({
+	      type: 'removeCartItem',
+	      productId: productId
+	    });
+	  },
+	
+	  toggleLikeItem: function toggleLikeItem(productId) {
+	    _Dispatcher2['default'].dispatch({
+	      type: 'toggleLikeItem',
+	      productId: productId
+	    });
+	  }
+	};
+
+/***/ },
+/* 165 */
+/*!*************************************!*\
+  !*** ./js/dispatcher/Dispatcher.js ***!
+  \*************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var _events = __webpack_require__(/*! events */ 166);
+	
+	var _events2 = _interopRequireDefault(_events);
+	
+	var EVENT_NAME = 'action';
+	
+	var Dispatcher = (function () {
+	  function Dispatcher() {
+	    _classCallCheck(this, Dispatcher);
+	
+	    this.emitter = new _events2['default']();
+	  }
+	
+	  _createClass(Dispatcher, [{
+	    key: 'register',
+	    value: function register(handler) {
+	      this.emitter.addListener(EVENT_NAME, handler);
+	    }
+	  }, {
+	    key: 'unregister',
+	    value: function unregister(handler) {
+	      this.emitter.removeListener(EVENT_NAME, handler);
+	    }
+	  }, {
+	    key: 'dispatch',
+	    value: function dispatch(action) {
+	      this.emitter.emit(EVENT_NAME, action);
+	    }
+	  }]);
+	
+	  return Dispatcher;
+	})();
+	
+	var AppDispatcher = new Dispatcher();
+	
+	module.exports = AppDispatcher;
+
+/***/ },
+/* 166 */
+/*!********************************************************!*\
+  !*** (webpack)/~/node-libs-browser/~/events/events.js ***!
+  \********************************************************/
+/***/ function(module, exports) {
+
+	// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+	
+	'use strict';
+	
+	function EventEmitter() {
+	  this._events = this._events || {};
+	  this._maxListeners = this._maxListeners || undefined;
+	}
+	module.exports = EventEmitter;
+	
+	// Backwards-compat with node 0.10.x
+	EventEmitter.EventEmitter = EventEmitter;
+	
+	EventEmitter.prototype._events = undefined;
+	EventEmitter.prototype._maxListeners = undefined;
+	
+	// By default EventEmitters will print a warning if more than 10 listeners are
+	// added to it. This is a useful default which helps finding memory leaks.
+	EventEmitter.defaultMaxListeners = 10;
+	
+	// Obviously not all Emitters should be limited to 10. This function allows
+	// that to be increased. Set to zero for unlimited.
+	EventEmitter.prototype.setMaxListeners = function (n) {
+	  if (!isNumber(n) || n < 0 || isNaN(n)) throw TypeError('n must be a positive number');
+	  this._maxListeners = n;
+	  return this;
+	};
+	
+	EventEmitter.prototype.emit = function (type) {
+	  var er, handler, len, args, i, listeners;
+	
+	  if (!this._events) this._events = {};
+	
+	  // If there is no 'error' event listener then throw.
+	  if (type === 'error') {
+	    if (!this._events.error || isObject(this._events.error) && !this._events.error.length) {
+	      er = arguments[1];
+	      if (er instanceof Error) {
+	        throw er; // Unhandled 'error' event
+	      }
+	      throw TypeError('Uncaught, unspecified "error" event.');
+	    }
+	  }
+	
+	  handler = this._events[type];
+	
+	  if (isUndefined(handler)) return false;
+	
+	  if (isFunction(handler)) {
+	    switch (arguments.length) {
+	      // fast cases
+	      case 1:
+	        handler.call(this);
+	        break;
+	      case 2:
+	        handler.call(this, arguments[1]);
+	        break;
+	      case 3:
+	        handler.call(this, arguments[1], arguments[2]);
+	        break;
+	      // slower
+	      default:
+	        args = Array.prototype.slice.call(arguments, 1);
+	        handler.apply(this, args);
+	    }
+	  } else if (isObject(handler)) {
+	    args = Array.prototype.slice.call(arguments, 1);
+	    listeners = handler.slice();
+	    len = listeners.length;
+	    for (i = 0; i < len; i++) listeners[i].apply(this, args);
+	  }
+	
+	  return true;
+	};
+	
+	EventEmitter.prototype.addListener = function (type, listener) {
+	  var m;
+	
+	  if (!isFunction(listener)) throw TypeError('listener must be a function');
+	
+	  if (!this._events) this._events = {};
+	
+	  // To avoid recursion in the case that type === "newListener"! Before
+	  // adding it to the listeners, first emit "newListener".
+	  if (this._events.newListener) this.emit('newListener', type, isFunction(listener.listener) ? listener.listener : listener);
+	
+	  if (!this._events[type])
+	    // Optimize the case of one listener. Don't need the extra array object.
+	    this._events[type] = listener;else if (isObject(this._events[type]))
+	    // If we've already got an array, just append.
+	    this._events[type].push(listener);else
+	    // Adding the second element, need to change to array.
+	    this._events[type] = [this._events[type], listener];
+	
+	  // Check for listener leak
+	  if (isObject(this._events[type]) && !this._events[type].warned) {
+	    if (!isUndefined(this._maxListeners)) {
+	      m = this._maxListeners;
+	    } else {
+	      m = EventEmitter.defaultMaxListeners;
+	    }
+	
+	    if (m && m > 0 && this._events[type].length > m) {
+	      this._events[type].warned = true;
+	      console.error('(node) warning: possible EventEmitter memory ' + 'leak detected. %d listeners added. ' + 'Use emitter.setMaxListeners() to increase limit.', this._events[type].length);
+	      if (typeof console.trace === 'function') {
+	        // not supported in IE 10
+	        console.trace();
+	      }
+	    }
+	  }
+	
+	  return this;
+	};
+	
+	EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+	
+	EventEmitter.prototype.once = function (type, listener) {
+	  if (!isFunction(listener)) throw TypeError('listener must be a function');
+	
+	  var fired = false;
+	
+	  function g() {
+	    this.removeListener(type, g);
+	
+	    if (!fired) {
+	      fired = true;
+	      listener.apply(this, arguments);
+	    }
+	  }
+	
+	  g.listener = listener;
+	  this.on(type, g);
+	
+	  return this;
+	};
+	
+	// emits a 'removeListener' event iff the listener was removed
+	EventEmitter.prototype.removeListener = function (type, listener) {
+	  var list, position, length, i;
+	
+	  if (!isFunction(listener)) throw TypeError('listener must be a function');
+	
+	  if (!this._events || !this._events[type]) return this;
+	
+	  list = this._events[type];
+	  length = list.length;
+	  position = -1;
+	
+	  if (list === listener || isFunction(list.listener) && list.listener === listener) {
+	    delete this._events[type];
+	    if (this._events.removeListener) this.emit('removeListener', type, listener);
+	  } else if (isObject(list)) {
+	    for (i = length; i-- > 0;) {
+	      if (list[i] === listener || list[i].listener && list[i].listener === listener) {
+	        position = i;
+	        break;
+	      }
+	    }
+	
+	    if (position < 0) return this;
+	
+	    if (list.length === 1) {
+	      list.length = 0;
+	      delete this._events[type];
+	    } else {
+	      list.splice(position, 1);
+	    }
+	
+	    if (this._events.removeListener) this.emit('removeListener', type, listener);
+	  }
+	
+	  return this;
+	};
+	
+	EventEmitter.prototype.removeAllListeners = function (type) {
+	  var key, listeners;
+	
+	  if (!this._events) return this;
+	
+	  // not listening for removeListener, no need to emit
+	  if (!this._events.removeListener) {
+	    if (arguments.length === 0) this._events = {};else if (this._events[type]) delete this._events[type];
+	    return this;
+	  }
+	
+	  // emit removeListener for all listeners on all events
+	  if (arguments.length === 0) {
+	    for (key in this._events) {
+	      if (key === 'removeListener') continue;
+	      this.removeAllListeners(key);
+	    }
+	    this.removeAllListeners('removeListener');
+	    this._events = {};
+	    return this;
+	  }
+	
+	  listeners = this._events[type];
+	
+	  if (isFunction(listeners)) {
+	    this.removeListener(type, listeners);
+	  } else if (listeners) {
+	    // LIFO order
+	    while (listeners.length) this.removeListener(type, listeners[listeners.length - 1]);
+	  }
+	  delete this._events[type];
+	
+	  return this;
+	};
+	
+	EventEmitter.prototype.listeners = function (type) {
+	  var ret;
+	  if (!this._events || !this._events[type]) ret = [];else if (isFunction(this._events[type])) ret = [this._events[type]];else ret = this._events[type].slice();
+	  return ret;
+	};
+	
+	EventEmitter.prototype.listenerCount = function (type) {
+	  if (this._events) {
+	    var evlistener = this._events[type];
+	
+	    if (isFunction(evlistener)) return 1;else if (evlistener) return evlistener.length;
+	  }
+	  return 0;
+	};
+	
+	EventEmitter.listenerCount = function (emitter, type) {
+	  return emitter.listenerCount(type);
+	};
+	
+	function isFunction(arg) {
+	  return typeof arg === 'function';
+	}
+	
+	function isNumber(arg) {
+	  return typeof arg === 'number';
+	}
+	
+	function isObject(arg) {
+	  return typeof arg === 'object' && arg !== null;
+	}
+	
+	function isUndefined(arg) {
+	  return arg === void 0;
+	}
+
+/***/ },
+/* 167 */
+/*!********************************!*\
+  !*** ./js/stores/CartStore.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dispatcherDispatcher = __webpack_require__(/*! ../dispatcher/Dispatcher */ 165);
+	
+	var _dispatcherDispatcher2 = _interopRequireDefault(_dispatcherDispatcher);
+	
+	var _events = __webpack_require__(/*! events */ 166);
+	
+	var _events2 = _interopRequireDefault(_events);
+	
+	var emitter = new _events2['default']();
+	
+	var _cartItems = {};
+	
+	var dispatcherToken = _dispatcherDispatcher2['default'].register(function (action) {
+	  var handler = handlers[action.type];
+	  if (handler) {
+	    handler(action);
+	  }
+	});
+	
+	var handlers = {
+	  addCartItem: function addCartItem(action) {
+	    var productId = action.productId;
+	    if (_cartItems[productId]) {
+	      _cartItems[productId].quantity++;
+	    } else {
+	      _cartItems[productId] = { id: productId, quantity: 1 };
+	    }
+	
+	    emitter.emit("change");
+	  },
+	
+	  subtractCartItem: function subtractCartItem(action) {
+	    var productId = action.productId;
+	    if (_cartItems[productId]) {
+	      _cartItems[productId].quantity--;
+	      if (_cartItems[productId].quantity == 0) {
+	        delete _cartItems[productId];
+	      }
+	    }
+	
+	    emitter.emit("change");
+	  },
+	
+	  removeCartItem: function removeCartItem(action) {
+	    var productId = action.productId;
+	    if (_cartItems[productId]) {
+	      delete _cartItems[productId];
+	    }
+	
+	    emitter.emit("change");
+	  }
+	};
+	
+	module.exports = {
+	  cartItems: function cartItems() {
+	    return _cartItems;
+	  },
+	
+	  getCartItems: function getCartItems() {
+	    return _cartItems;
+	  },
+	
+	  addChangeListener: function addChangeListener(callback) {
+	    emitter.addListener("change", callback);
+	  },
+	
+	  removeChangeListener: function removeChangeListener(callback) {
+	    emitter.removeListener("change", callback);
+	  }
+	};
+
+/***/ },
+/* 168 */
+/*!***********************************!*\
+  !*** ./js/stores/ProductStore.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _require = __webpack_require__(/*! ../data */ 169);
+	
+	var products = _require.products;
+	
+	var EventEmitter = __webpack_require__(/*! events */ 166);
+	
+	var emitter = new EventEmitter();
+	
+	var _productItems = products;
+	
+	var _isFilter = false;
+	
+	module.exports = {
+	  productItems: function productItems() {
+	    return _productItems;
+	  },
+	
+	  setFilter: function setFilter(filter) {
+	    _isFilter = filter;
+	    emitter.emit("change");
+	  },
+	
+	  isFilter: function isFilter() {
+	    return _isFilter;
+	  },
+	
+	  addChangeListener: function addChangeListener(callback) {
+	    emitter.addListener("change", callback);
+	  },
+	
+	  removeChangeListener: function removeChangeListener(callback) {
+	    emitter.removeListener("change", callback);
+	  }
+	};
+
+/***/ },
+/* 169 */
 /*!********************!*\
   !*** ./js/data.js ***!
   \********************/
@@ -19064,7 +19626,65 @@
 	};
 
 /***/ },
-/* 165 */
+/* 170 */
+/*!********************************!*\
+  !*** ./js/stores/LikeStore.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var AppDispatcher = __webpack_require__(/*! ../dispatcher/Dispatcher */ 165);
+	var EventEmitter = __webpack_require__(/*! events */ 166);
+	
+	var emitter = new EventEmitter();
+	
+	var _likeItems = {};
+	
+	var dispatcherToken = AppDispatcher.register(function (action) {
+	  var handler = handlers[action.type];
+	  if (handler) {
+	    handler(action);
+	  }
+	});
+	
+	var handlers = {
+	  toggleLikeItem: function toggleLikeItem(action) {
+	    var productId = action.productId;
+	    if (_likeItems[productId]) {
+	      _likeItems[productId].like = !_likeItems[productId].like;
+	    } else {
+	      _likeItems[productId] = { like: true };
+	    }
+	
+	    emitter.emit("change");
+	  }
+	};
+	
+	module.exports = {
+	  likeItems: function likeItems() {
+	    return _likeItems;
+	  },
+	
+	  getLikeStatus: function getLikeStatus(productId) {
+	    if (_likeItems[productId]) {
+	      return _likeItems[productId].like;
+	    } else {
+	      return false;
+	    }
+	  },
+	
+	  addChangeListener: function addChangeListener(callback) {
+	    emitter.addListener("change", callback);
+	  },
+	
+	  removeChangeListener: function removeChangeListener(callback) {
+	    emitter.removeListener("change", callback);
+	  }
+	};
+
+/***/ },
+/* 171 */
 /*!********************************************!*\
   !*** ./js/components/SiteRightSiderBar.js ***!
   \********************************************/
@@ -19074,8 +19694,8 @@
 	
 	var React = __webpack_require__(/*! react */ 1);
 	
-	var Cart = __webpack_require__(/*! ./Cart */ 166);
-	var Checkout = __webpack_require__(/*! ./Checkout */ 188);
+	var Checkout = __webpack_require__(/*! ./Checkout */ 172);
+	var ConnectedCart = __webpack_require__(/*! ./Cart */ 173);
 	
 	var SiteRightSiderBar = React.createClass({
 	    displayName: "SiteRightSiderBar",
@@ -19084,7 +19704,7 @@
 	        return React.createElement(
 	            "div",
 	            { className: "site__right-sidebar" },
-	            React.createElement(Cart, null),
+	            React.createElement(ConnectedCart, null),
 	            React.createElement(Checkout, null)
 	        );
 	    }
@@ -19093,7 +19713,85 @@
 	module.exports = SiteRightSiderBar;
 
 /***/ },
-/* 166 */
+/* 172 */
+/*!***********************************!*\
+  !*** ./js/components/Checkout.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(/*! react */ 1);
+	
+	var ProductStore = __webpack_require__(/*! ../stores/ProductStore */ 168);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 167);
+	
+	var Checkout = React.createClass({
+	  displayName: "Checkout",
+	
+	  componentDidMount: function componentDidMount() {
+	    CartStore.addChangeListener(this.forceUpdate.bind(this));
+	  },
+	
+	  componentWillUnMount: function componentWillUnMount() {
+	    CartStore.removeChangeListener(this.forceUpdate.bind(this));
+	  },
+	
+	  renderCheckoutLine: function renderCheckoutLine(title, amount) {
+	    return React.createElement(
+	      "div",
+	      { className: "checkout__line" },
+	      React.createElement(
+	        "div",
+	        { className: "checkout__line__label" },
+	        title
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "checkout__line__amount" },
+	        amount
+	      )
+	    );
+	  },
+	
+	  renderButton: function renderButton() {
+	    return React.createElement(
+	      "a",
+	      { className: "checkout__button" },
+	      React.createElement("img", { className: "checkout__button__icon", src: "img/cart-icon.svg" }),
+	      React.createElement(
+	        "div",
+	        { className: "checkout__button__label" },
+	        "Checkout"
+	      )
+	    );
+	  },
+	
+	  render: function render() {
+	    var totalAmount = 0;
+	    var cartItems = CartStore.getCartItems();
+	    var products = ProductStore.productItems();
+	    for (var key in cartItems) {
+	      var price = products[key].price;
+	      var amount = price * cartItems[key].quantity;
+	      totalAmount += amount;
+	    }
+	
+	    return React.createElement(
+	      "div",
+	      { className: "checkout" },
+	      React.createElement("hr", { className: "checkout__divider" }),
+	      React.createElement("input", { type: "text", className: "checkout__coupon-input", placeholder: "coupon code" }),
+	      this.renderCheckoutLine("Subtotal", totalAmount.toFixed(2)),
+	      this.renderButton()
+	    );
+	  }
+	});
+	
+	module.exports = Checkout;
+
+/***/ },
+/* 173 */
 /*!*******************************!*\
   !*** ./js/components/Cart.js ***!
   \*******************************/
@@ -19101,11 +19799,18 @@
 
 	"use strict";
 	
-	var React = __webpack_require__(/*! react */ 1);
-	var Ps = __webpack_require__(/*! perfect-scrollbar */ 167);
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	var CartItem = __webpack_require__(/*! ./CartItem */ 187);
-	var cartItems = __webpack_require__(/*! ../data */ 164).cartItems;
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(/*! react */ 1);
+	var Ps = __webpack_require__(/*! perfect-scrollbar */ 174);
+	
+	var CartItem = __webpack_require__(/*! ./CartItem */ 194);
 	
 	var Cart = React.createClass({
 	  displayName: "Cart",
@@ -19117,6 +19822,8 @@
 	
 	  render: function render() {
 	    var cartItmesArr = [];
+	    var cartItems = this.props.cartItems;
+	
 	    for (var key in cartItems) {
 	      cartItmesArr.push(React.createElement(CartItem, { key: key, cartItem: cartItems[key] }));
 	    }
@@ -19143,10 +19850,40 @@
 	  }
 	});
 	
-	module.exports = Cart;
+	/***********************************************************/
+	
+	var ConnectedStore = __webpack_require__(/*! ./ConnectedStore */ 195);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 167);
+	
+	var ConnectedCart = (function (_React$Component) {
+	  _inherits(ConnectedCart, _React$Component);
+	
+	  function ConnectedCart() {
+	    _classCallCheck(this, ConnectedCart);
+	
+	    _get(Object.getPrototypeOf(ConnectedCart.prototype), "constructor", this).apply(this, arguments);
+	  }
+	
+	  _createClass(ConnectedCart, [{
+	    key: "render",
+	    value: function render() {
+	      return React.createElement(
+	        ConnectedStore,
+	        { store: CartStore, propNames: ['cartItems'] },
+	        function (props) {
+	          return React.createElement(Cart, props);
+	        }
+	      );
+	    }
+	  }]);
+	
+	  return ConnectedCart;
+	})(React.Component);
+	
+	module.exports = ConnectedCart;
 
 /***/ },
-/* 167 */
+/* 174 */
 /*!**************************************!*\
   !*** ./~/perfect-scrollbar/index.js ***!
   \**************************************/
@@ -19157,10 +19894,10 @@
 	 */
 	'use strict';
 	
-	module.exports = __webpack_require__(/*! ./src/js/main */ 168);
+	module.exports = __webpack_require__(/*! ./src/js/main */ 175);
 
 /***/ },
-/* 168 */
+/* 175 */
 /*!********************************************!*\
   !*** ./~/perfect-scrollbar/src/js/main.js ***!
   \********************************************/
@@ -19171,9 +19908,9 @@
 	 */
 	'use strict';
 	
-	var destroy = __webpack_require__(/*! ./plugin/destroy */ 169),
-	    initialize = __webpack_require__(/*! ./plugin/initialize */ 177),
-	    update = __webpack_require__(/*! ./plugin/update */ 186);
+	var destroy = __webpack_require__(/*! ./plugin/destroy */ 176),
+	    initialize = __webpack_require__(/*! ./plugin/initialize */ 184),
+	    update = __webpack_require__(/*! ./plugin/update */ 193);
 	
 	module.exports = {
 	  initialize: initialize,
@@ -19182,7 +19919,7 @@
 	};
 
 /***/ },
-/* 169 */
+/* 176 */
 /*!******************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/destroy.js ***!
   \******************************************************/
@@ -19193,9 +19930,9 @@
 	 */
 	'use strict';
 	
-	var d = __webpack_require__(/*! ../lib/dom */ 170),
-	    h = __webpack_require__(/*! ../lib/helper */ 171),
-	    instances = __webpack_require__(/*! ./instances */ 173);
+	var d = __webpack_require__(/*! ../lib/dom */ 177),
+	    h = __webpack_require__(/*! ../lib/helper */ 178),
+	    instances = __webpack_require__(/*! ./instances */ 180);
 	
 	module.exports = function (element) {
 	  var i = instances.get(element);
@@ -19215,7 +19952,7 @@
 	};
 
 /***/ },
-/* 170 */
+/* 177 */
 /*!***********************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/dom.js ***!
   \***********************************************/
@@ -19300,7 +20037,7 @@
 	};
 
 /***/ },
-/* 171 */
+/* 178 */
 /*!**************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/helper.js ***!
   \**************************************************/
@@ -19311,8 +20048,8 @@
 	 */
 	'use strict';
 	
-	var cls = __webpack_require__(/*! ./class */ 172),
-	    d = __webpack_require__(/*! ./dom */ 170);
+	var cls = __webpack_require__(/*! ./class */ 179),
+	    d = __webpack_require__(/*! ./dom */ 177);
 	
 	exports.toInt = function (x) {
 	  return parseInt(x, 10) || 0;
@@ -19385,7 +20122,7 @@
 	};
 
 /***/ },
-/* 172 */
+/* 179 */
 /*!*************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/class.js ***!
   \*************************************************/
@@ -19438,7 +20175,7 @@
 	};
 
 /***/ },
-/* 173 */
+/* 180 */
 /*!********************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/instances.js ***!
   \********************************************************/
@@ -19449,11 +20186,11 @@
 	 */
 	'use strict';
 	
-	var d = __webpack_require__(/*! ../lib/dom */ 170),
-	    defaultSettings = __webpack_require__(/*! ./default-setting */ 174),
-	    EventManager = __webpack_require__(/*! ../lib/event-manager */ 175),
-	    guid = __webpack_require__(/*! ../lib/guid */ 176),
-	    h = __webpack_require__(/*! ../lib/helper */ 171);
+	var d = __webpack_require__(/*! ../lib/dom */ 177),
+	    defaultSettings = __webpack_require__(/*! ./default-setting */ 181),
+	    EventManager = __webpack_require__(/*! ../lib/event-manager */ 182),
+	    guid = __webpack_require__(/*! ../lib/guid */ 183),
+	    h = __webpack_require__(/*! ../lib/helper */ 178);
 	
 	var instances = {};
 	
@@ -19553,7 +20290,7 @@
 	};
 
 /***/ },
-/* 174 */
+/* 181 */
 /*!**************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/default-setting.js ***!
   \**************************************************************/
@@ -19580,7 +20317,7 @@
 	};
 
 /***/ },
-/* 175 */
+/* 182 */
 /*!*********************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/event-manager.js ***!
   \*********************************************************/
@@ -19662,7 +20399,7 @@
 	module.exports = EventManager;
 
 /***/ },
-/* 176 */
+/* 183 */
 /*!************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/guid.js ***!
   \************************************************/
@@ -19683,7 +20420,7 @@
 	})();
 
 /***/ },
-/* 177 */
+/* 184 */
 /*!*********************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/initialize.js ***!
   \*********************************************************/
@@ -19694,19 +20431,19 @@
 	 */
 	'use strict';
 	
-	var cls = __webpack_require__(/*! ../lib/class */ 172),
-	    h = __webpack_require__(/*! ../lib/helper */ 171),
-	    instances = __webpack_require__(/*! ./instances */ 173),
-	    updateGeometry = __webpack_require__(/*! ./update-geometry */ 178);
+	var cls = __webpack_require__(/*! ../lib/class */ 179),
+	    h = __webpack_require__(/*! ../lib/helper */ 178),
+	    instances = __webpack_require__(/*! ./instances */ 180),
+	    updateGeometry = __webpack_require__(/*! ./update-geometry */ 185);
 	
 	// Handlers
-	var clickRailHandler = __webpack_require__(/*! ./handler/click-rail */ 179),
-	    dragScrollbarHandler = __webpack_require__(/*! ./handler/drag-scrollbar */ 180),
-	    keyboardHandler = __webpack_require__(/*! ./handler/keyboard */ 181),
-	    mouseWheelHandler = __webpack_require__(/*! ./handler/mouse-wheel */ 182),
-	    nativeScrollHandler = __webpack_require__(/*! ./handler/native-scroll */ 183),
-	    selectionHandler = __webpack_require__(/*! ./handler/selection */ 184),
-	    touchHandler = __webpack_require__(/*! ./handler/touch */ 185);
+	var clickRailHandler = __webpack_require__(/*! ./handler/click-rail */ 186),
+	    dragScrollbarHandler = __webpack_require__(/*! ./handler/drag-scrollbar */ 187),
+	    keyboardHandler = __webpack_require__(/*! ./handler/keyboard */ 188),
+	    mouseWheelHandler = __webpack_require__(/*! ./handler/mouse-wheel */ 189),
+	    nativeScrollHandler = __webpack_require__(/*! ./handler/native-scroll */ 190),
+	    selectionHandler = __webpack_require__(/*! ./handler/selection */ 191),
+	    touchHandler = __webpack_require__(/*! ./handler/touch */ 192);
 	
 	module.exports = function (element, userSettings) {
 	  userSettings = typeof userSettings === 'object' ? userSettings : {};
@@ -19735,7 +20472,7 @@
 	};
 
 /***/ },
-/* 178 */
+/* 185 */
 /*!**************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/update-geometry.js ***!
   \**************************************************************/
@@ -19746,10 +20483,10 @@
 	 */
 	'use strict';
 	
-	var cls = __webpack_require__(/*! ../lib/class */ 172),
-	    d = __webpack_require__(/*! ../lib/dom */ 170),
-	    h = __webpack_require__(/*! ../lib/helper */ 171),
-	    instances = __webpack_require__(/*! ./instances */ 173);
+	var cls = __webpack_require__(/*! ../lib/class */ 179),
+	    d = __webpack_require__(/*! ../lib/dom */ 177),
+	    h = __webpack_require__(/*! ../lib/helper */ 178),
+	    instances = __webpack_require__(/*! ./instances */ 180);
 	
 	function getThumbSize(i, thumbSize) {
 	  if (i.settings.minScrollbarLength) {
@@ -19850,7 +20587,7 @@
 	};
 
 /***/ },
-/* 179 */
+/* 186 */
 /*!*****************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/click-rail.js ***!
   \*****************************************************************/
@@ -19861,9 +20598,9 @@
 	 */
 	'use strict';
 	
-	var h = __webpack_require__(/*! ../../lib/helper */ 171),
-	    instances = __webpack_require__(/*! ../instances */ 173),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 178);
+	var h = __webpack_require__(/*! ../../lib/helper */ 178),
+	    instances = __webpack_require__(/*! ../instances */ 180),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 185);
 	
 	function bindClickRailHandler(element, i) {
 	  function pageOffset(el) {
@@ -19920,7 +20657,7 @@
 	};
 
 /***/ },
-/* 180 */
+/* 187 */
 /*!*********************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/drag-scrollbar.js ***!
   \*********************************************************************/
@@ -19931,10 +20668,10 @@
 	 */
 	'use strict';
 	
-	var d = __webpack_require__(/*! ../../lib/dom */ 170),
-	    h = __webpack_require__(/*! ../../lib/helper */ 171),
-	    instances = __webpack_require__(/*! ../instances */ 173),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 178);
+	var d = __webpack_require__(/*! ../../lib/dom */ 177),
+	    h = __webpack_require__(/*! ../../lib/helper */ 178),
+	    instances = __webpack_require__(/*! ../instances */ 180),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 185);
 	
 	function bindMouseScrollXHandler(element, i) {
 	  var currentLeft = null;
@@ -20033,7 +20770,7 @@
 	};
 
 /***/ },
-/* 181 */
+/* 188 */
 /*!***************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/keyboard.js ***!
   \***************************************************************/
@@ -20044,9 +20781,9 @@
 	 */
 	'use strict';
 	
-	var h = __webpack_require__(/*! ../../lib/helper */ 171),
-	    instances = __webpack_require__(/*! ../instances */ 173),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 178);
+	var h = __webpack_require__(/*! ../../lib/helper */ 178),
+	    instances = __webpack_require__(/*! ../instances */ 180),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 185);
 	
 	function bindKeyboardHandler(element, i) {
 	  var hovered = false;
@@ -20167,7 +20904,7 @@
 	};
 
 /***/ },
-/* 182 */
+/* 189 */
 /*!******************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/mouse-wheel.js ***!
   \******************************************************************/
@@ -20178,9 +20915,9 @@
 	 */
 	'use strict';
 	
-	var h = __webpack_require__(/*! ../../lib/helper */ 171),
-	    instances = __webpack_require__(/*! ../instances */ 173),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 178);
+	var h = __webpack_require__(/*! ../../lib/helper */ 178),
+	    instances = __webpack_require__(/*! ../instances */ 180),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 185);
 	
 	function bindMouseWheelHandler(element, i) {
 	  var shouldPrevent = false;
@@ -20317,7 +21054,7 @@
 	};
 
 /***/ },
-/* 183 */
+/* 190 */
 /*!********************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/native-scroll.js ***!
   \********************************************************************/
@@ -20328,8 +21065,8 @@
 	 */
 	'use strict';
 	
-	var instances = __webpack_require__(/*! ../instances */ 173),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 178);
+	var instances = __webpack_require__(/*! ../instances */ 180),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 185);
 	
 	function bindNativeScrollHandler(element, i) {
 	  i.event.bind(element, 'scroll', function () {
@@ -20343,7 +21080,7 @@
 	};
 
 /***/ },
-/* 184 */
+/* 191 */
 /*!****************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/selection.js ***!
   \****************************************************************/
@@ -20354,9 +21091,9 @@
 	 */
 	'use strict';
 	
-	var h = __webpack_require__(/*! ../../lib/helper */ 171),
-	    instances = __webpack_require__(/*! ../instances */ 173),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 178);
+	var h = __webpack_require__(/*! ../../lib/helper */ 178),
+	    instances = __webpack_require__(/*! ../instances */ 180),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 185);
 	
 	function bindSelectionHandler(element, i) {
 	  function getRangeNode() {
@@ -20461,7 +21198,7 @@
 	};
 
 /***/ },
-/* 185 */
+/* 192 */
 /*!************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/touch.js ***!
   \************************************************************/
@@ -20472,8 +21209,8 @@
 	 */
 	'use strict';
 	
-	var instances = __webpack_require__(/*! ../instances */ 173),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 178);
+	var instances = __webpack_require__(/*! ../instances */ 180),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 185);
 	
 	function bindTouchHandler(element, i, supportsTouch, supportsIePointer) {
 	  function shouldPreventDefault(deltaX, deltaY) {
@@ -20637,7 +21374,7 @@
 	};
 
 /***/ },
-/* 186 */
+/* 193 */
 /*!*****************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/update.js ***!
   \*****************************************************/
@@ -20648,10 +21385,10 @@
 	 */
 	'use strict';
 	
-	var d = __webpack_require__(/*! ../lib/dom */ 170),
-	    h = __webpack_require__(/*! ../lib/helper */ 171),
-	    instances = __webpack_require__(/*! ./instances */ 173),
-	    updateGeometry = __webpack_require__(/*! ./update-geometry */ 178);
+	var d = __webpack_require__(/*! ../lib/dom */ 177),
+	    h = __webpack_require__(/*! ../lib/helper */ 178),
+	    instances = __webpack_require__(/*! ./instances */ 180),
+	    updateGeometry = __webpack_require__(/*! ./update-geometry */ 185);
 	
 	module.exports = function (element) {
 	  var i = instances.get(element);
@@ -20680,7 +21417,7 @@
 	};
 
 /***/ },
-/* 187 */
+/* 194 */
 /*!***********************************!*\
   !*** ./js/components/CartItem.js ***!
   \***********************************/
@@ -20691,13 +21428,18 @@
 	var React = __webpack_require__(/*! react */ 1);
 	
 	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 163);
-	var products = __webpack_require__(/*! ../data */ 164).products;
+	var ProductStore = __webpack_require__(/*! ../stores/ProductStore */ 168);
+	var Actions = __webpack_require__(/*! ../dispatcher/Actions */ 164);
 	
 	/**************************************************/
 	/* react cart item */
 	
 	var CartItem = React.createClass({
 	  displayName: "CartItem",
+	
+	  _removeCartItem: function _removeCartItem(e) {
+	    Actions.removeCartItem(this.props.cartItem.id);
+	  },
 	
 	  renderTopPart: function renderTopPart(product, quantity) {
 	    return React.createElement(
@@ -20722,12 +21464,14 @@
 	          product.price + (quantity > 1 ? " x " + quantity : "")
 	        )
 	      ),
-	      React.createElement("img", { className: "cart-item__trash", src: "img/trash-icon.svg" })
+	      React.createElement("img", { className: "cart-item__trash", src: "img/trash-icon.svg",
+	        onClick: this._removeCartItem })
 	    );
 	  },
 	
 	  render: function render() {
 	    var cartItem = this.props.cartItem;
+	    var products = ProductStore.productItems();
 	    var product = products[cartItem.id];
 	
 	    return React.createElement(
@@ -20746,77 +21490,75 @@
 	module.exports = CartItem;
 
 /***/ },
-/* 188 */
-/*!***********************************!*\
-  !*** ./js/components/Checkout.js ***!
-  \***********************************/
+/* 195 */
+/*!*****************************************!*\
+  !*** ./js/components/ConnectedStore.js ***!
+  \*****************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
-	var React = __webpack_require__(/*! react */ 1);
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	var _require = __webpack_require__(/*! ../data */ 164);
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 	
-	var products = _require.products;
-	var cartItems = _require.cartItems;
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var Checkout = React.createClass({
-	  displayName: "Checkout",
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	  renderCheckoutLine: function renderCheckoutLine(title, amount) {
-	    return React.createElement(
-	      "div",
-	      { className: "checkout__line" },
-	      React.createElement(
-	        "div",
-	        { className: "checkout__line__label" },
-	        title
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "checkout__line__amount" },
-	        amount
-	      )
-	    );
-	  },
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	  renderButton: function renderButton() {
-	    return React.createElement(
-	      "a",
-	      { className: "checkout__button" },
-	      React.createElement("img", { className: "checkout__button__icon", src: "img/cart-icon.svg" }),
-	      React.createElement(
-	        "div",
-	        { className: "checkout__button__label" },
-	        "Checkout"
-	      )
-	    );
-	  },
+	var _react = __webpack_require__(/*! react */ 1);
 	
-	  render: function render() {
-	    var totalAmount = 0;
-	    for (var key in cartItems) {
-	      var price = products[key].price;
-	      var amount = price * cartItems[key].quantity;
-	      totalAmount += amount;
-	    }
+	var _react2 = _interopRequireDefault(_react);
 	
-	    return React.createElement(
-	      "div",
-	      { className: "checkout" },
-	      React.createElement("hr", { className: "checkout__divider" }),
-	      React.createElement("input", { type: "text", className: "checkout__coupon-input", placeholder: "coupon code" }),
-	      this.renderCheckoutLine("Subtotal", totalAmount),
-	      this.renderButton()
-	    );
+	// This component should re-render whenever its store emits the "change" event.
+	
+	var ConnectedStore = (function (_React$Component) {
+	  _inherits(ConnectedStore, _React$Component);
+	
+	  function ConnectedStore() {
+	    _classCallCheck(this, ConnectedStore);
+	
+	    _get(Object.getPrototypeOf(ConnectedStore.prototype), 'constructor', this).apply(this, arguments);
 	  }
-	});
 	
-	module.exports = Checkout;
+	  _createClass(ConnectedStore, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.props.store.addChangeListener(this.forceUpdate.bind(this));
+	    }
+	  }, {
+	    key: 'componentWillUnMount',
+	    value: function componentWillUnMount() {
+	      this.props.store.removeChangeListener(this.forceUpdate.bind(this));
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      // The `children` property is a function.
+	      var contentRenderFunction = this.props.children;
+	
+	      // 1. Read all the data from store by calling reader methods dynamically.
+	      // 2. Pass the data to `contentRenderFunction`.
+	      var store = this.props.store;
+	      var propNames = this.props.propNames;
+	      var storeProps = {};
+	      propNames.map(function (prop) {
+	        storeProps[prop] = store[prop]();
+	      });
+	
+	      return contentRenderFunction(storeProps);
+	    }
+	  }]);
+	
+	  return ConnectedStore;
+	})(_react2['default'].Component);
+	
+	module.exports = ConnectedStore;
 
 /***/ },
-/* 189 */
+/* 196 */
 /*!**************************************************!*\
   !*** ./js/components/SiteRightSiderBarToggle.js ***!
   \**************************************************/
@@ -20839,6 +21581,30 @@
 	});
 	
 	module.exports = SiteRightSiderBarToggle;
+
+/***/ },
+/* 197 */
+/*!******************************!*\
+  !*** ./js/LoggingService.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dispatcherDispatcher = __webpack_require__(/*! ./dispatcher/Dispatcher */ 165);
+	
+	var _dispatcherDispatcher2 = _interopRequireDefault(_dispatcherDispatcher);
+	
+	module.exports = function enableLoggin() {
+	  _dispatcherDispatcher2['default'].register(function (action) {
+	    console.log(JSON.stringify({
+	      time: new Date(),
+	      action: action
+	    }, undefined, 2));
+	  });
+	};
 
 /***/ }
 /******/ ]);

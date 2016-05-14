@@ -556,6 +556,10 @@ a {
   padding: 20px 15px;
 }
 
+.title__heart {
+  cursor: pointer;
+}
+
 .site__content {
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
@@ -661,6 +665,7 @@ a {
       -ms-flex-pack: center;
           justify-content: center;
   margin: 15px;
+  cursor: pointer;
 }
 
 .product__price {
@@ -707,8 +712,8 @@ a {
 }
 
 .product__heart {
+  cursor: pointer;
 }
-
 
 .cart {
   -webkit-box-flex: 1;
@@ -824,6 +829,7 @@ a {
 }
 
 .cart-item__trash {
+  cursor: pointer;
 }
 
 .adjust-qty {
@@ -848,6 +854,7 @@ a {
   border-radius: 10px;
   text-align: center;
   margin: 10px;
+  cursor: pointer;
 }
 
 .adjust-qty--gray .adjust-qty__button {

@@ -1,13 +1,13 @@
 const React = require("react");
 
-const Cart = require("./Cart");
 const Checkout = require("./Checkout");
+const ConnectedCart = require("./Cart");
 
 let SiteRightSiderBar = React.createClass({
     render() {
         return(
             <div className="site__right-sidebar">
-              <Cart/>
+              <ConnectedCart />
               <Checkout/>
             </div>
         );
