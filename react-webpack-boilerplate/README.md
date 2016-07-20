@@ -4,7 +4,7 @@ run `npm install` to download the project dependencies:
 npm install
 ```
 
-use "normalize.css" and flexbox style in `css/app.css`:
+use "normalize.css" and flexbox style in `css/index.css`:
 
 ```css
 @import "normalize.css";
